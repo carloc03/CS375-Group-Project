@@ -1,0 +1,45 @@
+#login-container {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    min-height: 70%;
+    /* overflow-y: auto; */
+    min-width: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    border-style: groove;
+    background-color: white; 
+    justify-content: space-around;
+    border: 1px solid blue;
+}
+
+#create{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    text-align: left;
+    border-style: groove;
+    border: 1px solid lightblue;
+    box-sizing: border-box;
+    padding: 2rem;
+    background-color: #f8f9fa; 
+}
+
+.form-group {
+    padding: 2px;
+}
+
+#message-box {
+    height: 25px;
+    width: 100%;
+    margin-top: 10px;
+    text-align: center;
+}
+
+body {
+    background-image: url('images/beach-background.jpeg');
+    background-size: cover;
+}
