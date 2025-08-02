@@ -52,6 +52,7 @@ form.addEventListener("submit", (event) => {
                 div.innerHTML = `
                     <input type="checkbox" id="flight${i}" class="me-2">
                     <label for="flight${i}">
+                        <strong>${firstFlight.airline} ${firstFlight.flight_number}</strong><br>
                         <div>
                             <strong>Route:</strong> ${flightInfo}<br>
                             <strong>Price:</strong> ${price} two ways<br>
