@@ -8,14 +8,37 @@ const hostname = "localhost";
 const env = require("../env.json");
 const Pool = pg.Pool;
 const pool = new Pool(env);
+const axios = require("axios");
+
+let flightKey = env["flight_key"]; 
+let flightUrl = env["flight_url"];
+
 pool.connect().then(function () {
   console.log(`Connected to database ${env.database}`);
 });
 
 // bootstrap for css
-app.use("/", express.static("../node_modules/bootstrap/dist/"));
+app.use("/",express.static("../node_modules/bootstrap/dist/"));
+app.use(express.json());
 
 app.use("/create-account", express.static("login"));
+app.use("/search-flights", express.static("flights"));
+
+app.get("/flights", (req, res) => {
+  let from = req.query.from;
+  let to = req.query.to;
+  let date = req.query.date;
+
+  let url = `${flightUrl}?engine=google_flights&departure_id=${from}&arrival_id=${to}&outbound_date=${date}&type=2&api_key=${flightKey}`;
+  
+  axios.get(url)
+    .then(response => {
+      res.status(200).json(response.data);
+    })
+    .catch(error => {
+      res.status(500).json({ error: "Failed to get data." });
+    });
+});
 
 app.use(express.json());
 app.post("/create-account", (req, res) => {
@@ -42,4 +65,4 @@ app.post("/create-account", (req, res) => {
 
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
-  });
+});
