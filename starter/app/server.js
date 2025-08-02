@@ -21,8 +21,9 @@ pool.connect().then(function () {
 app.use("/",express.static("../node_modules/bootstrap/dist/"));
 app.use(express.json());
 
-app.use('/images', express.static("images"))
+app.use('/images', express.static("images"));
 
+app.use("/home", express.static("public"));
 app.use("/create-account", express.static("registration"));
 app.use("/login", express.static("login"));
 app.use("/plan-creation", express.static("plan_creation"));
