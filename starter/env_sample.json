@@ -6,4 +6,7 @@
 	"port": 5432,
 	"flight_key": "",
 	"flight_url": "https://serpapi.com/search"
+	"AMADEUS_CLIENT_ID": "your-client-id-here",
+	"AMADEUS_CLIENT_SECRET": "your-client-secret-here"
+	
 }
