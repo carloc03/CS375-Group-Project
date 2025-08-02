@@ -5,5 +5,5 @@
 	"password": "",
 	"port": 5432,
 	"flight_key": "",
-  "flight_url": "https://serpapi.com/search"
+	"flight_url": "https://serpapi.com/search"
 }
