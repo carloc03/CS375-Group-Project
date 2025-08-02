@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Creation - Travel Planner</title>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Travel Planner</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#plans">My Plans</a></li>
+                <li><a href="#account">Account</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <h1 class="page-title">Create Your Travel Plan</h1>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form class="search-form" id="searchForm">
+                <div class="input-group">
+                    <label for="airport">Airport Code</label>
+                    <input type="text" id="airport" name="airport" placeholder="e.g., LAX, JFK" maxlength="3">
+                </div>
+                <div class="input-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" placeholder="e.g., Los Angeles">
+                </div>
+                <div class="input-group">
+                    <label for="country">Country</label>
+                    <input type="text" id="country" name="country" placeholder="e.g., United States">
+                </div>
+                <div class="input-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" name="startDate">
+                </div>
+                <div class="input-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate" name="endDate">
+                </div>
+                <button type="submit" class="search-btn">Search Plans</button>
+            </form>
+        </div>
+
+        <!-- Weather Forecast Section -->
+        <div class="content-section">
+            <h2 class="section-title">
+                7-Day Weather Forecast
+            </h2>
+            <div id="weatherContent" class="weather-grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Enter a destination to see weather forecast
+                </div>
+            </div>
+        </div>
+
+        <!-- Flights Section -->
+        <div class="content-section">
+            <h2 class="section-title">
+                Available Flights
+            </h2>
+            <div id="flightsContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Enter travel details to search for flights
+                </div>
+            </div>
+        </div>
+
+        <!-- Google Maps Section -->
+        <div class="content-section">
+            <h2 class="section-title">
+                Destination Map
+            </h2>
+            <div id="mapContainer" class="map-container">
+                Map will load here when you select a destination
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
