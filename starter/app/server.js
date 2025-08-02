@@ -21,7 +21,11 @@ pool.connect().then(function () {
 app.use("/",express.static("../node_modules/bootstrap/dist/"));
 app.use(express.json());
 
-app.use("/create-account", express.static("login"));
+app.use('/images', express.static("images"))
+
+app.use("/create-account", express.static("registration"));
+app.use("/login", express.static("login"));
+app.use("/plan-creation", express.static("plan_creation"));
 app.use("/search-flights", express.static("flights"));
 
 app.get("/flights", (req, res) => {

@@ -40,6 +40,6 @@
 }
 
 body {
-    background-image: url('images/beach-background.jpeg');
+    background-image: url(/images/beach-background.jpeg);
     background-size: cover;
 }

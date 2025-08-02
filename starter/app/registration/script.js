@@ -34,6 +34,7 @@ submitButton.addEventListener("click", () => {
             console.log(response.status)
             if(response.status == 200){
                 console.log("OK")
+                messageBox.textContent = "Account Created."
             }else{
                 console.log("BAD")
             }
