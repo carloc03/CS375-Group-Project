@@ -28,6 +28,7 @@ app.use("/create-account", express.static("registration"));
 app.use("/login", express.static("login"));
 app.use("/plan-creation", express.static("plan_creation"));
 app.use("/search-flights", express.static("flights"));
+app.use('/map', express.static("map"));
 
 app.get("/flights", (req, res) => {
   let from = req.query.from;
