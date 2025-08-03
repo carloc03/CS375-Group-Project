@@ -26,17 +26,19 @@
 
         <!-- Search Section -->
         <div class="search-section">
-            <form class="search-form" id="searchForm">
+
+            <form class="search-form" id="searchForm" action="/plan" method="GET">
                 <div class="input-group">
-                    <label for="airport">Airport Code</label>
+                    <label for="airport">Starting Airport Code</label>
                     <input type="text" id="airport" name="airport" placeholder="e.g., LAX, JFK" maxlength="3">
                 </div>
                 <div class="input-group">
-                    <label for="city">City</label>
-                    <input type="text" id="city" name="city" placeholder="e.g., Los Angeles">
+                    <label for="city">Destination City</label>
+                    <input type="text" id="city" name="city" placeholder="e.g., Your Mom's House">
                 </div>
                 <div class="input-group">
-                    <label for="country">Country</label>
+                    <label for="country">Destination Country</label>
+
                     <input type="text" id="country" name="country" placeholder="e.g., United States">
                 </div>
                 <div class="input-group">
@@ -47,7 +49,9 @@
                     <label for="endDate">End Date</label>
                     <input type="date" id="endDate" name="endDate">
                 </div>
-                <button type="submit" class="search-btn">Search Plans</button>
+
+                <button type="submit" class="search-btn">Submit</button>
+
             </form>
         </div>
 
@@ -87,6 +91,7 @@
             </div>
         </div>
     </div>
+    <script src="script.js"></script>
 </body>
 
 </html>
