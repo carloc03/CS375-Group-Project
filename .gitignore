@@ -3,3 +3,4 @@ key.json
 amadeusenv.json
 node_modules
 .DS_store
+starter/app/.env
