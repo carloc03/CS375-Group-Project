@@ -1,3 +1,5 @@
+require("dotenv").config(); // Loads variables from .env
+
 const pg = require("pg");
 const express = require("express");
 const app = express();
@@ -5,17 +7,24 @@ const app = express();
 const port = 3000;
 const hostname = "localhost";
 
-const env = require("../env.json");
 const Pool = pg.Pool;
-const pool = new Pool(env);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
 const axios = require("axios");
 
-let flightKey = env["flight_key"];
-let flightUrl = env["flight_url"];
-let weatherKey = env["weather_key"];
+//let flightKey = env["flight_key"];
+//let flightUrl = env["flight_url"];
+//let weatherKey = env["weather_key"];
+let amadeusKey = process.env.AMADEUS_KEY;
+let amadeusSecret = process.env.AMADEUS_SECRET;
 
 pool.connect().then(function () {
-  console.log(`Connected to database ${env.database}`);
+  console.log(`Connected to: ${process.env.DATABASE_URL}`);
 });
 
 // bootstrap for css
