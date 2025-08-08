@@ -35,24 +35,6 @@
     </div>
   </div>
 
-  <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const email = document.getElementById('inputEmail');
-      const pw = document.getElementById('password');
-      const msg = document.getElementById('message-box');
-      msg.textContent = '';
-      msg.className = 'mt-2 text-center';
-
-      if (!email.value || !pw.value) {
-        msg.textContent = 'Please enter both email and password.';
-        msg.classList.add('text-danger');
-        return;
-      }
-
-
-      this.submit();
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
