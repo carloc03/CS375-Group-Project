@@ -46,7 +46,7 @@ let authorize = (req, res, next) => {
 };
 
 /* middleware; check if login token in token storage, if yes, redirect to logged in home page*/
-let checkSession = (req, res, next) => {
+let redirectHomeIfLoggedIn = (req, res, next) => {
   let token = req.cookies.token;
   if (token && tokenStorage.hasOwnProperty(token)) {
     return res.redirect("/home");
@@ -61,10 +61,10 @@ app.use(express.json());
 
 app.use('/images', express.static("images"));
 
-app.use("/", checkSession, express.static("public"));
+app.use("/", express.static("public"));
 
 // homepage for logged in users
-app.use("/home", authorize, express.static("home"));
+app.use("/home", express.static("home"));
 
 app.use("/create-account", express.static("registration"));
 app.use("/login", express.static("login"));
