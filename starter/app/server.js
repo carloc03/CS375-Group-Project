@@ -4,7 +4,7 @@ const app = express();
 const pg = require("pg");
 let cookieParser = require("cookie-parser");
 let crypto = require("crypto");
-
+app.use(cookieParser());
 
 const port = 3000;
 const hostname = "localhost";
@@ -24,6 +24,7 @@ pool.connect().then(function () {
 
 // bootstrap for css
 app.use("/", express.static("../node_modules/bootstrap/dist/"));
+
 app.use(express.json());
 
 app.use('/images', express.static("images"));
@@ -37,6 +38,20 @@ app.use('/map', express.static("map"));
 
 // Global Token Storage to Keep Track of Sessions
 let tokenStorage = {};
+
+/* middleware; check if login token in token storage, if not, 403 response */
+let authorize = (req, res, next) => {
+  let token = req.cookies.token;
+  console.log(token, tokenStorage);
+  if (token === undefined || !tokenStorage.hasOwnProperty(token)) {
+    res.redirect("/login");
+    return res.sendStatus(403); // TODO
+  }
+  next();
+};
+
+// homepage for logged in users
+app.use("/home", authorize, express.static("home"));
 
 app.get("/flights", (req, res) => {
   let from = req.query.from;

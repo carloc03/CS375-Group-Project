@@ -28,8 +28,8 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         if(response.status == 200){
             console.log("OK")
 
-            //Send user to lander page
-            location.assign('/')
+            //Send user to logged in home page
+            location.assign('/home')
         }else{
             console.log("BAD")
             msg.textContent = "Could Not Find Account"
