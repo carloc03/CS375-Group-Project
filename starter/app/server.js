@@ -22,20 +22,6 @@ pool.connect().then(function () {
   console.log(`Connected to database ${env.database}`);
 });
 
-// bootstrap for css
-app.use("/", express.static("../node_modules/bootstrap/dist/"));
-
-app.use(express.json());
-
-app.use('/images', express.static("images"));
-
-app.use("/", express.static("public"));
-app.use("/create-account", express.static("registration"));
-app.use("/login", express.static("login"));
-app.use("/plan-creation", express.static("plan_creation"));
-app.use("/search-flights", express.static("flights"));
-app.use('/map', express.static("map"));
-
 // Global Token Storage to Keep Track of Sessions
 let tokenStorage = {};
 
@@ -50,8 +36,32 @@ let authorize = (req, res, next) => {
   next();
 };
 
+/* middleware; check if login token in token storage, if yes, redirect to logged in home page*/
+let checkSession = (req, res, next) => {
+  let token = req.cookies.token;
+  if (token && tokenStorage.hasOwnProperty(token)) {
+    return res.redirect("/home");
+  }
+  next();
+}
+
+// bootstrap for css
+app.use("/", express.static("../node_modules/bootstrap/dist/"));
+
+app.use(express.json());
+
+app.use('/images', express.static("images"));
+
+app.use("/", checkSession, express.static("public"));
+
 // homepage for logged in users
 app.use("/home", authorize, express.static("home"));
+
+app.use("/create-account", express.static("registration"));
+app.use("/login", express.static("login"));
+app.use("/plan-creation", express.static("plan_creation"));
+app.use("/search-flights", express.static("flights"));
+app.use('/map', express.static("map"));
 
 app.get("/flights", (req, res) => {
   let from = req.query.from;
