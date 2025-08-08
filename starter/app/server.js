@@ -3,29 +3,37 @@ require("dotenv").config(); // Loads variables from .env
 const pg = require("pg");
 const express = require("express");
 const app = express();
-
-const port = 3000;
-const hostname = "localhost";
-
-const Pool = pg.Pool;
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
-
 const axios = require("axios");
 
-//let flightKey = env["flight_key"];
-//let flightUrl = env["flight_url"];
-//let weatherKey = env["weather_key"];
-let amadeusKey = process.env.AMADEUS_KEY;
-let amadeusSecret = process.env.AMADEUS_SECRET;
+const port = process.env.PORT || 3000;
 
-pool.connect().then(function () {
-  console.log(`Connected to: ${process.env.DATABASE_URL}`);
+const hostname = "localhost";
+
+const useSSL =
+  process.env.DATABASE_SSL === "true" ||
+  process.env.NODE_ENV === "production" ||
+  (process.env.DATABASE_URL || "").includes("render.com");
+
+
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: useSSL ? { rejectUnauthorized: false } : false,
 });
+
+
+const flightKey = process.env.FLIGHT_KEY;
+const flightUrl = process.env.FLIGHT_URL;
+const weatherKey = process.env.WEATHER_KEY;
+const amadeusKey = process.env.AMADEUS_KEY;
+const amadeusSecret = process.env.AMADEUS_SECRET;
+
+pool
+  .connect()
+  .then(() => console.log(`Connected to database (${useSSL ? "SSL on" : "SSL off"})`))
+  .catch(err => {
+    console.error("DB connection failed:", err.message);
+    process.exit(1);
+  });
 
 // bootstrap for css
 app.use("/", express.static("../node_modules/bootstrap/dist/"));
@@ -56,7 +64,6 @@ app.get("/flights", (req, res) => {
     });
 });
 
-app.use(express.json());
 app.post("/create-account", (req, res) => {
   let body = req.body;
   console.log(body);
