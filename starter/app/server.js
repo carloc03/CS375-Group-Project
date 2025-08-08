@@ -1,6 +1,10 @@
-const pg = require("pg");
 const express = require("express");
 const app = express();
+
+const pg = require("pg");
+let cookieParser = require("cookie-parser");
+let crypto = require("crypto");
+
 
 const port = 3000;
 const hostname = "localhost";
@@ -24,12 +28,15 @@ app.use(express.json());
 
 app.use('/images', express.static("images"));
 
-app.use("/home", express.static("public"));
+app.use("/", express.static("public"));
 app.use("/create-account", express.static("registration"));
 app.use("/login", express.static("login"));
 app.use("/plan-creation", express.static("plan_creation"));
 app.use("/search-flights", express.static("flights"));
 app.use('/map', express.static("map"));
+
+// Global Token Storage to Keep Track of Sessions
+let tokenStorage = {};
 
 app.get("/flights", (req, res) => {
   let from = req.query.from;
@@ -61,13 +68,12 @@ app.post("/create-account", (req, res) => {
     VALUES($1, $2, $3, crypt($4, gen_salt('bf')))
     RETURNING *`,
     [body.firstName, body.lastName, body.email, body.password],
-  )
-    .then((result) => {
-      console.log("Inserted:");
-      console.log(result.rows);
-      res.statusCode = 200;
-      res.send();
-    })
+  ).then((result) => {
+    console.log("Inserted:");
+    console.log(result.rows);
+    res.statusCode = 200;
+    res.send();
+  })
 })
 
 app.get("/plan", (req, res) => {
@@ -112,6 +118,81 @@ app.get("/plan", (req, res) => {
       console.log("Server error:", error);
       res.status(500).json({ message: "Failed to get weather data" });
     });
+});
+
+/* returns a random 32 byte string */
+function makeToken() {
+  return crypto.randomBytes(32).toString("hex");
+}
+let cookieOptions = {
+  httpOnly: true, // client-side JS can't access this cookie; important to mitigate cross-site scripting attack damage
+  secure: true, // cookie will only be sent over HTTPS connections (and localhost); important so that traffic sniffers can't see it even if our user tried to use an HTTP version of our site, if we supported that
+  sameSite: "strict", // browser will only include this cookie on requests to this domain, not other domains; important to prevent cross-site request forgery attacks
+};
+function validateLogin(body) {
+  // TODO
+  return true;
+}
+
+app.post("/login", async (req, res) => {
+  let body = req.body;
+  console.log(body);
+
+  // TODO validate body is correct shape and type
+  if (!validateLogin(body)) {
+    return res.sendStatus(400); // TODO
+  }
+
+  let email = body.email;
+  let passwordAttempt = body.passwordAttempt
+
+  let result;
+  try {
+    result = await pool.query(
+      `SELECT * FROM accounts WHERE email=$1 and password_hash=crypt($2, password_hash);`,
+      [email, passwordAttempt],
+    );
+  } catch (error) {
+    console.log("SELECT FAILED", error);
+
+    // 500: Internal Server Error - Something wrong with DB
+    return res.sendStatus(500);
+  }
+
+  //should only ever return 1 row since emails are unique
+  if(result.rows.length === 1){
+    let account = result.rows[0];
+    console.log(account);
+    console.log(account.first_name)
+
+    let token = makeToken();
+    console.log("Generated token", token);
+    tokenStorage[token] = email;
+    return res.cookie("token", token, cookieOptions).send();
+  }else{
+    // Credentials Bad
+    return res.sendStatus(400);
+  }
+})
+
+app.post("/logout", (req, res) => {
+  let { token } = req.cookies;
+
+  if (token === undefined) {
+    console.log("Already logged out");
+    return res.sendStatus(400); // TODO
+  }
+
+  if (!tokenStorage.hasOwnProperty(token)) {
+    console.log("Token doesn't exist");
+    return res.sendStatus(400); // TODO
+  }
+
+  console.log("Before", tokenStorage);
+  delete tokenStorage[token];
+  console.log("Deleted", tokenStorage);
+
+  return res.clearCookie("token", cookieOptions).send();
 });
 
 app.listen(port, hostname, () => {
