@@ -1,0 +1,26 @@
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="style.css" />
+<div class="container-md">
+  <div id="flights-container">
+    <h1>TODO Create Planner</h1>
+    <div class="container-md"></div>
+        <form id="flightsearch">
+            <label for="from" class="form-label">From:</label>
+            <input type="text" id="from" name="from" placeholder="ex: JFK" required>
+                        
+            <label for="to" class="form-label">To:</label>
+            <input type="text" id="to" name="to" placeholder="ex: LAX" required>
+                        
+            <label for="when"> When?</label>
+            <input type="date" id="when" name="when" required>
+
+            <button type="submit">Search Flights</button>
+        </form>
+
+    <div id="flightResults">
+
+    </div>
+
+    <script src="flights2.js"></script>
+</body>
+</html>
