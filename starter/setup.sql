@@ -12,3 +12,17 @@ CREATE TABLE IF NOT EXISTS planners (
     email TEXT NOT NULL,
     planner_data TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS flight (
+    flightNumber TEXT NOT NULL,
+    origin TEXT NOT NULL,
+    destination TEXT NOT NULL,
+    departure TIMESTAMP,
+    returnDate TIMESTAMP,
+    adults INTEGER,
+    children INTEGER,
+    infants INTEGER,
+    travelClass TEXT,
+    cost DECIMAL(10,2),
+    duration TEXT NOT NULL
+);

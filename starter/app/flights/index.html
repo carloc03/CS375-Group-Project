@@ -1,26 +1,113 @@
-<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="style.css" />
-<div class="container-md">
-  <div id="flights-container">
-    <h1>TODO Create Planner</h1>
-    <div class="container-md"></div>
-        <form id="flightsearch">
-            <label for="from" class="form-label">From:</label>
-            <input type="text" id="from" name="from" placeholder="ex: JFK" required>
-                        
-            <label for="to" class="form-label">To:</label>
-            <input type="text" id="to" name="to" placeholder="ex: LAX" required>
-                        
-            <label for="when"> When?</label>
-            <input type="date" id="when" name="when" required>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Flight Search</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <body class="bg-light">
+  <div class="container my-5">
+    <div class="text-center mb-5">
+      <h1 class="display-5 fw-bold text-primary">
+        <i class="bi bi-airplane"></i>Flight Search
+      </h1>
+    </div>
+      <div class="card-body">
+        <form id="flightForm">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="originSelect" class="form-label fw-semibold">
+                <i class="bi bi-geo-alt-fill text-primary me-1"></i>Origin City
+              </label>
+              <select id="originSelect" class="form-select" required>
+                <option value="">Select origin...</option>
+              </select>
+            </div>
 
-            <button type="submit">Search Flights</button>
+            <div class="col-md-6">
+              <label for="destinationSelect" class="form-label fw-semibold">
+                <i class="bi bi-geo-alt text-success me-1"></i>Destination City
+              </label>
+              <select id="destinationSelect" class="form-select" required>
+                <option value="">Select destination...</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="departureDate" class="form-label fw-semibold">
+                <i class="bi bi-calendar-date text-warning me-1"></i>Departure Date
+              </label>
+              <input type="date" id="departureDate" class="form-control" required>
+            </div>
+
+            <div class="col-md-6">
+              <label for="returnDate" class="form-label fw-semibold">
+                <i class="bi bi-calendar-check text-info me-1"></i>Return Date (optional)
+              </label>
+              <input type="date" id="returnDate" class="form-control">
+            </div>
+
+            <div class="col-md-4">
+              <label for="adults" class="form-label fw-semibold">
+                <i class="bi bi-person-fill text-dark me-1"></i>Adults
+              </label>
+              <input type="number" id="adults" class="form-control" min="1" value="1" required>
+            </div>
+
+            <div class="col-md-4">
+              <label for="children" class="form-label fw-semibold">
+                <i class="bi bi-person text-secondary me-1"></i>Children
+              </label>
+              <input type="number" id="children" class="form-control" min="0" value="0">
+            </div>
+
+            <div class="col-md-4">
+              <label for="infants" class="form-label fw-semibold">
+                <i class="bi bi-person-heart"></i></i>Infants
+              </label>
+              <input type="number" id="infants" class="form-control" min="0" value="0">
+            </div>
+
+            <div class="col-12">
+              <label for="travelClass" class="form-label fw-semibold">
+                <i class="bi bi-emoji-smile"></i>Travel Class
+              </label>
+              <select id="travelClass" class="form-select">
+                <option value="">Any</option>
+                <option value="ECONOMY">Economy</option>
+                <option value="PREMIUM_ECONOMY">Premium Economy</option>
+                <option value="BUSINESS">Business</option>
+                <option value="FIRST">First</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+                <i class="bi bi-search me-2"></i>Search Flights
+              </button>
+            </div>
+          </div>
         </form>
-
-    <div id="flightResults">
-
+      </div>
     </div>
 
-    <script src="flights.js"></script>
+  <div class="spinner" id="spinner"></div>
+
+  <h2>Results:</h2>
+  <div id="results" class="results-container">No results yet.</div>
+  
+  <button id="seeMoreBtn" class="see-more-btn hidden">See More Flights</button>
+
+  <div id="submitSection" class="submit-section hidden">
+    <div class="selected-count" id="selectedCount">0 flights selected</div>
+    <button id="submitSelectedFlights" class="submit-btn" disabled>Add to Planner</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <script src="flights.js"></script>
 </body>
 </html>

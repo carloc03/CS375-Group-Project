@@ -84,7 +84,6 @@ app.get("/flights", (req, res) => {
   let from = req.query.from;
   let to = req.query.to;
   let date = req.query.date;
-
   let url = `${flightUrl}?engine=google_flights&departure_id=${from}&arrival_id=${to}&outbound_date=${date}&type=2&api_key=${flightKey}`;
 
   axios.get(url)
@@ -94,6 +93,26 @@ app.get("/flights", (req, res) => {
     .catch(error => {
       res.status(500).json({ error: "Failed to get data." });
     });
+});
+app.post("/flights", (req, res) => {
+  const token = req.cookies.token;
+  const email = tokenStorage[token];
+
+  const { flightData } = req.body;
+
+  const {flightNumber, origin, destination, departure, returnDate, adults, children, infants, travelClass, cost, duration,} = flightData;
+  pool.query(
+    `INSERT INTO flight(flightNumber, origin, destination, departure, returnDate, adults, children, infants, travelClass, cost, duration) 
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+    [flightNumber, origin, destination, departure, returnDate, adults, children, infants, travelClass, cost, duration,]
+  ).then(result => {
+    console.log('Flight saved successfully');
+    res.status(200).json({ message: "Flight saved successfully" });
+  })
+  .catch(error => {
+    console.log(error);
+    res.sendStatus(500);
+  })
 });
 
 app.post("/create-account", (req, res) => {
