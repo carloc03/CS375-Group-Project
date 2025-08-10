@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Create Plan – Step 2</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <section class="hero">
+    <h1 class="hero-title">Itinerary</h1>
+    <p class="hero-sub">Add locations and organize your trip</p>
+  </section>
+
+  <main class="layout">
+    <section class="map-wrap">
+      <div id="map" aria-label="Interactive map"></div>
+      <div class="hint">Click on the map to add places to your plan.</div>
+    </section>
+
+    <section class="list-wrap">
+      <div class="list-header">
+        <h2>Agenda <span id="agendaCount" class="count-pill">(0)</span></h2>
+        <div class="list-actions">
+          <button id="clearAll" class="btn outline-danger" disabled>Clear</button>
+          <button id="savePlan" class="btn primary" disabled>Save Plan</button>
+        </div>
+      </div>
+
+      <div id="planList" class="plan-list empty">
+        <div class="empty-state">
+          No places yet. Click the map to get started.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

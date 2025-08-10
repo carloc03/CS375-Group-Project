@@ -30,6 +30,7 @@ const flightUrl = process.env.FLIGHT_URL;
 const weatherKey = process.env.WEATHER_KEY;
 const amadeusKey = process.env.AMADEUS_KEY;
 const amadeusSecret = process.env.AMADEUS_SECRET;
+const mapsKey = process.env.MAPS_KEY;
 
 pool
   .connect()
@@ -79,6 +80,7 @@ app.use("/login", express.static("login"));
 app.use("/plan-creation", express.static("plan_creation"));
 app.use("/search-flights", express.static("flights"));
 app.use('/map', express.static("map"));
+app.use('/mapV2', express.static("mapV2"));
 
 app.get("/flights", (req, res) => {
   let from = req.query.from;
@@ -253,6 +255,12 @@ app.post("/logout", (req, res) => {
   console.log("Deleted", tokenStorage);
 
   return res.clearCookie("token", cookieOptions).send();
+});
+
+app.get("/mapV2/config/maps-api-url", (req, res) => {
+  if (!mapsKey) return res.status(500).json({ error: "Maps key not configured" });
+  const url = `https://maps.googleapis.com/maps/api/js?key=${mapsKey}&v=weekly`;
+  res.json({ url });
 });
 
 app.listen(port, hostname, () => {
