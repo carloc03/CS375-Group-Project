@@ -26,3 +26,8 @@ CREATE TABLE IF NOT EXISTS flight (
     cost DECIMAL(10,2),
     duration TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS session_storage (
+    session_token TEXT NOT NULL,
+    email TEXT NOT NULL
+);
