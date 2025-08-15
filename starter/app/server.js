@@ -42,6 +42,26 @@ pool
 // Global Token Storage to Keep Track of Sessions
 let tokenStorage = {};
 
+async function loadTokenStorageFromDatabase(){
+  let result;
+  try {
+    result = await pool.query(
+      `SELECT * FROM session_storage;`,
+    );
+  } catch (error) {
+    console.log("SELECT FAILED", error);
+
+    // 500: Internal Server Error - Something wrong with DB
+    return res.sendStatus(500);
+  }
+  for(let tokenRow of result.rows){
+    tokenStorage[tokenRow['session_token']] = tokenRow.email
+  }
+  
+  console.log("Loaded Session Tokens from DB:", tokenStorage);
+}
+loadTokenStorageFromDatabase();
+
 /* middleware; check if login token in token storage, if not, 403 response */
 let authorize = (req, res, next) => {
   if(req.path == "/"){
@@ -123,7 +143,6 @@ app.post("/flights", (req, res) => {
 
 app.post("/create-account", (req, res) => {
   let body = req.body;
-  console.log(body);
 
   //passwords are encrypted with a salt
   //to check and compare passwords for authentication, use:
@@ -234,6 +253,22 @@ app.post("/login", async (req, res) => {
     let token = makeToken();
     console.log("Generated token", token);
     tokenStorage[token] = email;
+
+    //save token to db
+    try {
+      result = await pool.query(
+        `INSERT INTO session_storage(session_token, email) 
+        VALUES($1, $2)
+        RETURNING *`,
+        [token, email],
+      );
+    } catch (error) {
+      console.log("SELECT FAILED", error);
+  
+      // 500: Internal Server Error - Something wrong with DB
+      return res.sendStatus(500);
+    }
+    
     return res.cookie("token", token, cookieOptions).send();
   }else{
     // Credentials Bad
@@ -252,6 +287,20 @@ app.post("/logout", (req, res) => {
   if (!tokenStorage.hasOwnProperty(token)) {
     console.log("Token doesn't exist");
     return res.sendStatus(400); // TODO
+  }
+
+  //delete token from db
+  console.log("Deleted:")
+  try {
+    result = pool.query(
+      `DELETE FROM session_storage WHERE session_token=$1 AND email=$2`,
+      [token, tokenStorage[token]],
+    );
+  } catch (error) {
+    console.log("SELECT FAILED", error);
+
+    // 500: Internal Server Error - Something wrong with DB
+    return res.sendStatus(500);
   }
 
   console.log("Before", tokenStorage);
