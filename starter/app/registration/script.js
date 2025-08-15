@@ -8,11 +8,7 @@ submitButton.addEventListener("click", () => {
     let email = document.getElementById("inputEmail").value;
     let password = document.getElementById("password").value;
     let confirmPassword = document.getElementById("confirmPassword").value;
-    console.log(firstName);
-    console.log(lastName);
-    console.log(email);
-    console.log(password);
-    console.log(confirmPassword);
+    
     if(!firstName || !lastName || !email || !password || !confirmPassword){
         messageBox.textContent = "Information is missing."
     }else if(!(password == confirmPassword)){
@@ -35,6 +31,29 @@ submitButton.addEventListener("click", () => {
             if(response.status == 200){
                 console.log("OK")
                 messageBox.textContent = "Account Created."
+                fetch("/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        passwordAttempt: password
+                    }),
+                }).then(response => {
+                    console.log(response.status)
+                    if(response.status == 200){
+                        console.log("OK")
+            
+                        //Send user to logged in home page
+                        location.assign('/home')
+                    }else{
+                        console.log("BAD")
+                        msg.textContent = "Could Not Find Account"
+                        msg.classList.add('text-danger');
+                    }
+                    console.log(response);
+                })
             }else{
                 console.log("BAD")
             }

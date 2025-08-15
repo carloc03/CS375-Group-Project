@@ -44,6 +44,9 @@ let tokenStorage = {};
 
 /* middleware; check if login token in token storage, if not, 403 response */
 let authorize = (req, res, next) => {
+  if(req.path == "/"){
+    return next();
+  }
   let token = req.cookies.token;
   console.log(token, tokenStorage);
   if (token === undefined || !tokenStorage.hasOwnProperty(token)) {
@@ -55,6 +58,9 @@ let authorize = (req, res, next) => {
 
 /* middleware; check if login token in token storage, if yes, redirect to logged in home page*/
 let redirectHomeIfLoggedIn = (req, res, next) => {
+  if(req.path !== "/"){
+    return next();
+  }
   let token = req.cookies.token;
   if (token && tokenStorage.hasOwnProperty(token)) {
     return res.redirect("/home");
@@ -69,7 +75,7 @@ app.use(express.json());
 
 app.use('/images', express.static("images"));
 
-app.use("/", express.static("public"));
+app.use("/", redirectHomeIfLoggedIn, express.static("public"));
 
 // homepage for logged in users
 app.use("/home", express.static("home"));
