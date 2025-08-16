@@ -1,20 +1,65 @@
 let params = new URL(document.location.toString()).searchParams;
 let planId = params.get("id");
 console.log(planId);
+
+let flightInfo = {"cost": 302.6, 
+"adults": 1, 
+"origin": "ATL", 
+"infants": 0, 
+"children": 0, 
+"duration": "PT10H50M", 
+"departure": "2025-08-17T13:33:00", 
+"returnDate": "2025-08-17T23:23:00", 
+"destination": "AUS", 
+"travelClass": "", 
+"flightNumber": "F93293"
+}
+
+let flightInfoCard = document.getElementById("flight-info")
+
+let doNotInclude = ["origin", "departure", "duration", "returnDate", "destination"]
+
+document.getElementById("airport").textContent += flightInfo.origin;
+
+document.getElementById("startDate").textContent = flightInfo.departure;
+document.getElementById("endDate").textContent = flightInfo.returnDate;
+document.getElementById("destination").textContent = flightInfo.destination;
+
+for (var flightDetail in flightInfo){
+    if(!doNotInclude.includes(flightDetail)){
+        console.log(flightDetail);
+        let detailP = document.createElement("p");
+        detailP.className = "card-text";
+        detailP.textContent = flightDetail + ": " + flightInfo[flightDetail];
+
+        flightInfoCard.appendChild(detailP);
+    }
+}
+
+//<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+
+
 let landMarks = {
     0 : {
-        address: "R4PH+8X Čestín, Czechia",
-        lat: 49.835768,
-        lng: 15.129997,
+        address: "Hodges Heights Park, 7063 Creek Crossing Dr, Harrisburg, PA 17111, USA",
+        lat: 40.276714,
+        lng: -76.763919,
         name: "",
-        notes: "First Visit, beautiful city",
+        notes: "First Visit, beautiful park",
     },
     1: { 
-        address: "GGVW+92 Stetseva, Ivano-Frankivsk Oblast, Ukraine",
-        lat: 48.543432,
-        lng: 25.545036,
+        address: "City Island (North Side Shelter), Harrisburg, PA 17101, USA",
+        lat: 40.254148,
+        lng: -76.887349,
         name: "",
-        notes: "Ukraine Example asfsafaslshfkfhsdfasdasdjdhfsfhskfh",
+        notes: "Example asfsafaslshfkfhsdfasdasdjdhfsfhskfh",
+    }, 
+    3: {
+        address: "411 Gravel Rd, Palmyra, PA 17078, USA",
+        lat: 40.319828,
+        lng: -76.620112,
+        name: "",
+        notes: "Visiting Pennsylvania street and getting some cheesesteaks",
     }
 }
 
