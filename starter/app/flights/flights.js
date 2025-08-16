@@ -1,6 +1,3 @@
-const CLIENT_ID = "w9BIaferLGNyUos4AlF4HL1Wa1AI81kz";
-const CLIENT_SECRET = "1ByZF2ziTXk4lwXs";
-
 const cityOptions = [
   { value: "ATL", label: "Atlanta, GA (ATL)" }, { value: "LAX", label: "Los Angeles, CA (LAX)" },
   { value: "ORD", label: "Chicago, IL (ORD)" }, { value: "DFW", label: "Dallas/Fort Worth, TX (DFW)" },
@@ -44,12 +41,12 @@ new Choices('#destinationSelect', {
 let results = document.getElementById("results");
 
 document.getElementById('flightForm').addEventListener('submit', async function (e) {
-  event.preventDefault();
-  
+  e.preventDefault();
+
   const spinner = document.getElementById('spinner');
   const seeMoreBtn = document.getElementById('seeMoreBtn');
   const submitSection = document.getElementById('submitSection');
-  
+
   results.innerHTML = "Finding flights.";
   spinner.style.display = 'block';
   seeMoreBtn.classList.add('hidden');
@@ -66,18 +63,10 @@ document.getElementById('flightForm').addEventListener('submit', async function 
   const children = document.getElementById('children').value;
   const infants = document.getElementById('infants').value;
   const travelClass = document.getElementById('travelClass').value;
-
-  try {
-    const tokenRes = await fetch("https://test.api.amadeus.com/v1/security/oauth2/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        grant_type: "client_credentials",
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET
-      })
-    });
-    const token = (await tokenRes.json()).access_token;
+  
+  try { 
+    const tokenRes = await fetch("/amadeus/token");
+    const { access_token: token } = await tokenRes.json();
 
     let apiUrl = `https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${origin}&destinationLocationCode=${destination}&departureDate=${departureDate}&adults=${adults}&nonStop=false&currencyCode=USD&max=20`;
     if (returnDate) apiUrl += `&returnDate=${returnDate}`;
@@ -89,9 +78,9 @@ document.getElementById('flightForm').addEventListener('submit', async function 
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await flightRes.json();
-    
+
     results.innerHTML = "";
-    
+
     if (!data.data || data.data.length === 0) {
       results.innerText = "No flights found.";
       return;
@@ -100,7 +89,7 @@ document.getElementById('flightForm').addEventListener('submit', async function 
     allFlights = data.data;
     displayFlights();
     submitSection.classList.remove('hidden');
-    
+
   } catch (err) {
     console.error(err);
     results.innerHTML = 'Error fetching flights.';

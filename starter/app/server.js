@@ -126,8 +126,28 @@ app.post("/flights", (req, res) => {
   const token = req.cookies.token;
   const email = tokenStorage[token];
 
+  if (!email) {
+    return res.status(401).json({ message: "Failed because of email" });
+  }
+
   const { flightData } = req.body;
 
+ pool.query(
+    `
+    INSERT INTO JSON (email, flights)
+    VALUES ($1, $2)
+    RETURNING id
+    `,
+    [email, flightData]
+  ).then(() => {
+    res.status(200).json({ message: "Flight saved successfully" });
+  })
+  .catch((error) => {
+    console.log(error);
+    res.sendStatus(500);
+  });
+
+  /*
   const {flightNumber, origin, destination, departure, returnDate, adults, children, infants, travelClass, cost, duration,} = flightData;
   pool.query(
     `INSERT INTO flight(flightNumber, origin, destination, departure, returnDate, adults, children, infants, travelClass, cost, duration) 
@@ -141,6 +161,21 @@ app.post("/flights", (req, res) => {
     console.log(error);
     res.sendStatus(500);
   })
+    */
+});
+app.get("/amadeus/token", async (req, res) => {
+  try {
+    const tokenRes = await axios.post("https://test.api.amadeus.com/v1/security/oauth2/token",
+      new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: amadeusKey,
+        client_secret: amadeusSecret
+      })    
+    );
+    res.json({ access_token: tokenRes.data.access_token });
+  } catch (error) {
+    res.status(500);
+  }
 });
 
 app.post("/create-account", (req, res) => {
