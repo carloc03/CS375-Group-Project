@@ -96,6 +96,8 @@ app.use("/", redirectHomeIfLoggedIn, express.static("public"));
 // homepage for logged in users
 app.use("/home", authorize, express.static("home"));
 
+app.use("/plan", authorize, express.static("itinerary"));
+
 app.use("/create-account", express.static("registration"));
 app.use("/login", express.static("login"));
 app.use("/plan-creation", authorize, express.static("plan_creation"));
