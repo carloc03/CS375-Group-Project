@@ -4,10 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landmarks Finder</title>
+    <title>Hotels Finder</title>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjDEg3Rx1bAM8aNt3q17St8WRoLUY7sSU&libraries=places&callback=initMap"></script>
+    <script src="script.js"></script>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
 </head>
 
 <body>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">My Plans</a>
+        <a href="#">Account</a>
+    </nav>
+
     <form>
         <label for="city">City:</label>
         <input type="text" id="city" name="city">
@@ -16,6 +31,10 @@
 
         <label for="country">Country:</label>
         <input type="text" id="country" name="country">
+
+        <br><br>
+
+        <button type="button" id="search-btn">Search</button>
 
         <br><br>
 
