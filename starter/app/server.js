@@ -43,7 +43,7 @@ pool
 // Global Token Storage to Keep Track of Sessions
 let tokenStorage = {};
 
-async function loadTokenStorageFromDatabase(){
+async function loadTokenStorageFromDatabase() {
   let result;
   try {
     result = await pool.query(
@@ -55,10 +55,10 @@ async function loadTokenStorageFromDatabase(){
     // 500: Internal Server Error - Something wrong with DB
     return res.sendStatus(500);
   }
-  for(let tokenRow of result.rows){
+  for (let tokenRow of result.rows) {
     tokenStorage[tokenRow['session_token']] = tokenRow.email
   }
-  
+
   console.log("Loaded Session Tokens from DB:", tokenStorage);
 }
 loadTokenStorageFromDatabase();
@@ -74,7 +74,7 @@ let authorize = (req, res, next) => {
 
 /* middleware; check if login token in token storage, if yes, redirect to logged in home page*/
 let redirectHomeIfLoggedIn = (req, res, next) => {
-  if(req.path !== "/"){
+  if (req.path !== "/") {
     return next();
   }
   let token = req.cookies.token;
@@ -106,6 +106,7 @@ app.use("/search-flights", express.static("flights"));
 app.use('/map', express.static("map"));
 app.use('/mapV2', express.static("mapV2"));
 app.use("/planner", express.static("planner"));
+app.use('/hotels', express.static("hotels"));
 
 app.get("/flights", (req, res) => {
   let from = req.query.from;
@@ -131,7 +132,7 @@ app.post("/flights", (req, res) => {
 
   const { flightData } = req.body;
 
- pool.query(
+  pool.query(
     `
     INSERT INTO travel_planners (email, flights)
     VALUES ($1, $2)
@@ -141,10 +142,10 @@ app.post("/flights", (req, res) => {
   ).then(() => {
     res.status(200).json({ message: "Flight saved successfully" });
   })
-  .catch((error) => {
-    console.log(error);
-    res.sendStatus(500);
-  });
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(500);
+    });
 
   /*
   const {flightNumber, origin, destination, departure, returnDate, adults, children, infants, travelClass, cost, duration,} = flightData;
@@ -169,7 +170,7 @@ app.get("/amadeus/token", async (req, res) => {
         grant_type: "client_credentials",
         client_id: amadeusKey,
         client_secret: amadeusSecret
-      })    
+      })
     );
     res.json({ access_token: tokenRes.data.access_token });
   } catch (error) {
@@ -214,7 +215,7 @@ app.get("/plans", async (req, res) => {
     `,
     [email]
   ).then(result => {
-      res.json(result.rows); 
+    res.json(result.rows);
   }).catch(err => {
     console.error(err);
     res.sendStatus(500);
@@ -305,7 +306,7 @@ app.post("/login", async (req, res) => {
   }
 
   //should only ever return 1 row since emails are unique
-  if(result.rows.length === 1){
+  if (result.rows.length === 1) {
     let account = result.rows[0];
     console.log(account);
     console.log(account.first_name)
@@ -324,13 +325,13 @@ app.post("/login", async (req, res) => {
       );
     } catch (error) {
       console.log("SELECT FAILED", error);
-  
+
       // 500: Internal Server Error - Something wrong with DB
       return res.sendStatus(500);
     }
-    
+
     return res.cookie("token", token, cookieOptions).send();
-  }else{
+  } else {
     // Credentials Bad
     return res.sendStatus(400);
   }
