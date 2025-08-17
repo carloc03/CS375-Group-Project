@@ -100,10 +100,12 @@ app.use("/plan", authorize, express.static("itinerary"));
 
 app.use("/create-account", express.static("registration"));
 app.use("/login", express.static("login"));
-app.use("/plan-creation", authorize, express.static("plan_creation"));
-app.use("/search-flights", authorize, express.static("flights"));
-app.use('/map', authorize, express.static("map"));
-app.use('/mapV2', authorize, express.static("mapV2"));
+
+app.use("/plan-creation", express.static("plan_creation"));
+app.use("/search-flights", express.static("flights"));
+app.use('/map', express.static("map"));
+app.use('/mapV2', express.static("mapV2"));
+app.use("/planner", express.static("planner"));
 
 app.get("/flights", (req, res) => {
   let from = req.query.from;
@@ -131,7 +133,7 @@ app.post("/flights", (req, res) => {
 
  pool.query(
     `
-    INSERT INTO JSON (email, flights)
+    INSERT INTO travel_planners (email, flights)
     VALUES ($1, $2)
     RETURNING id
     `,
@@ -195,7 +197,31 @@ app.post("/create-account", (req, res) => {
   })
 })
 
-app.get("/plan", (req, res) => {
+app.get("/plans", async (req, res) => {
+  const token = req.cookies.token;
+  const email = tokenStorage[token];
+
+  if (!email) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  pool.query(
+    `
+    SELECT id, flights, hotels, landmarks, created_at, updated_at
+    FROM travel_planners
+    WHERE email = $1
+    ORDER BY created_at DESC
+    `,
+    [email]
+  ).then(result => {
+      res.json(result.rows); 
+  }).catch(err => {
+    console.error(err);
+    res.sendStatus(500);
+  });
+});
+
+app.get("/api/plans", (req, res) => {
   let city = req.query.city;
   let country = req.query.country;
   let airport = req.query.airport;
