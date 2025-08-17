@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Planner</title>
+</head>
+<body>
+  <h1>Travel Plans</h1>
+  
+  <div id="plannerContainer">
+  </div>
+
+  <script>
+    async function loadPlans() {
+      const container = document.getElementById("plannerContainer");
+      try {
+        const res = await fetch("/plans");
+
+        const plans = await res.json();
+        container.innerHTML = "";
+
+        if (!plans || plans.length === 0) {
+          container.innerHTML = "No plans found.";
+          return;
+        }
+
+        plans.forEach(plan => {
+          const div = document.createElement("div");
+          div.innerHTML = `
+            <h3>Plan Number: ${plan.id}</h3>
+            <h4>Flights:</h4>
+            <pre>${JSON.stringify(plan.flights, null, 2)}</pre>
+            <hr>
+          `;
+          container.appendChild(div);
+        });
+
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    loadPlans();
+  </script>
+</body>
+</html>
