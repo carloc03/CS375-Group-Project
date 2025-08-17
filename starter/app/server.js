@@ -65,14 +65,9 @@ loadTokenStorageFromDatabase();
 
 /* middleware; check if login token in token storage, if not, 403 response */
 let authorize = (req, res, next) => {
-  if(req.path == "/"){
-    return next();
-  }
   let token = req.cookies.token;
-  console.log(token, tokenStorage);
   if (token === undefined || !tokenStorage.hasOwnProperty(token)) {
-    res.redirect("/login");
-    return res.sendStatus(403); // TODO
+    return res.redirect("/login");
   }
   next();
 };
@@ -99,16 +94,18 @@ app.use('/images', express.static("images"));
 app.use("/", redirectHomeIfLoggedIn, express.static("public"));
 
 // homepage for logged in users
-app.use("/home", express.static("home"));
+app.use("/home", authorize, express.static("home"));
+
+app.use("/plan", authorize, express.static("itinerary"));
 
 app.use("/create-account", express.static("registration"));
 app.use("/login", express.static("login"));
+
 app.use("/plan-creation", express.static("plan_creation"));
 app.use("/search-flights", express.static("flights"));
 app.use('/map', express.static("map"));
 app.use('/mapV2', express.static("mapV2"));
 app.use("/planner", express.static("planner"));
-
 
 app.get("/flights", (req, res) => {
   let from = req.query.from;
@@ -279,7 +276,7 @@ let cookieOptions = {
 };
 function validateLogin(body) {
   // TODO
-  return true;
+  return body.email && body.passwordAttempt;
 }
 
 app.post("/login", async (req, res) => {
