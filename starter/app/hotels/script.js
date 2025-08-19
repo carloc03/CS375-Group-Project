@@ -4,9 +4,11 @@ let infoWindow;
 let autocomplete;
 let hotels = [];
 let markers = [];
+let selectedHotels = [];
 
 const countryRestrict = { country: "fr" };
 const countries = {
+    // Top 10 Most Visited Countries
     fr: {
         center: { lat: 46.2276, lng: 2.2137 },
         zoom: 5,
@@ -47,6 +49,7 @@ const countries = {
         center: { lat: 55.3781, lng: -3.4360 },
         zoom: 5,
     },
+    // Asia-Pacific
     jp: {
         center: { lat: 36.2048, lng: 138.2529 },
         zoom: 5,
@@ -209,6 +212,7 @@ const countries = {
     },
 };
 
+// Dynamically load Google Maps API with key from server
 fetch('/mapV2/config/maps-api-url')
     .then(response => response.json())
     .then(data => {
@@ -236,6 +240,8 @@ function initMap() {
     infoWindow = new google.maps.InfoWindow();
     places = new google.maps.places.PlacesService(map);
 
+    // Create the autocomplete object and associate it with the UI input control.
+    // Restrict the search to the default country (France), and to place type "cities".
     autocomplete = new google.maps.places.Autocomplete(
         document.getElementById("city"),
         {
@@ -247,6 +253,7 @@ function initMap() {
 
     autocomplete.addListener("place_changed", onPlaceChanged);
 
+    // Add a DOM event listener to react when the user selects a country.
     const countrySelect = document.getElementById("country-select");
     if (countrySelect) {
         countrySelect.addEventListener("change", setAutocompleteCountry);
@@ -254,10 +261,13 @@ function initMap() {
 
     const searchButton = document.getElementById('search-btn');
     const clearButton = document.getElementById('clear-btn');
+    const itineraryButton = document.getElementById('view-itinerary-btn');
 
     if (searchButton) searchButton.addEventListener('click', search);
     if (clearButton) clearButton.addEventListener('click', clearResults);
+    if (itineraryButton) itineraryButton.addEventListener('click', viewItinerary);
 
+    // Allow Enter key to trigger search
     document.getElementById('city').addEventListener('keypress', handleEnterKey);
 }
 
@@ -267,6 +277,8 @@ function handleEnterKey(event) {
     }
 }
 
+// When the user selects a city, get the place details for the city and
+// zoom the map in on the city.
 function onPlaceChanged() {
     const place = autocomplete.getPlace();
 
@@ -274,6 +286,7 @@ function onPlaceChanged() {
         map.panTo(place.geometry.location);
         map.setZoom(15);
 
+        // Add location marker
         new google.maps.Marker({
             position: place.geometry.location,
             map: map,
@@ -290,6 +303,7 @@ function onPlaceChanged() {
     }
 }
 
+// Search for hotels in the selected city, within the viewport of the map.
 function search() {
     const bounds = map.getBounds();
     if (!bounds) {
@@ -307,7 +321,7 @@ function search() {
 
     places.nearbySearch(searchRequest, (results, status, pagination) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-            hotels = results.slice(0, 20);
+            hotels = results.slice(0, 20); // Limit to 20 hotels
             setLoading(false);
             displayHotelsList();
             createHotelMarkers();
@@ -318,6 +332,9 @@ function search() {
         }
     });
 }
+
+// Set the country restriction based on user input.
+// Also center and zoom the map on the given country.
 function setAutocompleteCountry() {
     const countrySelect = document.getElementById("country-select");
     const country = countrySelect.value;
@@ -348,8 +365,10 @@ function displayHotelsList() {
       <h3>Nearby Hotels</h3>
       <div class="hotel-count">${hotels.length} hotels found</div>
     </div>
-    ${hotels.map((hotel, index) => `
-      <div class="hotel-item" onclick="focusOnHotel(${index})">
+    ${hotels.map((hotel, index) => {
+        const isSelected = selectedHotels.some(selected => selected.place_id === hotel.place_id);
+        return `
+      <div class="hotel-item">
         <div class="hotel-name">${hotel.name}</div>
         <div class="hotel-details">
           <div class="hotel-detail rating">
@@ -362,19 +381,29 @@ function displayHotelsList() {
             📍 ${hotel.vicinity || 'Address not available'}
           </div>
           ${hotel.opening_hours ?
-            `<div class="hotel-detail">
-              ${hotel.opening_hours.open_now ? 'Open now' : 'Closed'}
+                `<div class="hotel-detail">
+              ${hotel.opening_hours.open_now ? '🟢 Open now' : '🔴 Closed'}
             </div>` : ''
-        }
+            }
+        </div>
+        <div class="hotel-actions">
+          <button class="add-hotel-btn" onclick="addToSelectedHotels(${index})" ${isSelected ? 'disabled' : ''}>
+            ${isSelected ? '✓ Added' : 'Add to List'}
+          </button>
+          <button class="view-on-map-btn" onclick="focusOnHotel(${index})">
+            View on Map
+          </button>
         </div>
       </div>
-    `).join('')}
+    `;
+    }).join('')}
   `;
 
     container.innerHTML = hotelsHtml;
 }
 
 function createHotelMarkers() {
+    // Clear existing hotel markers (keep location marker)
     markers.forEach(marker => marker.setMap(null));
     markers = [];
 
@@ -405,6 +434,7 @@ function showInfoWindow() {
                 return;
             }
 
+            // Close all other info windows
             infoWindow.close();
 
             const content = createDetailedInfoWindowContent(place);
@@ -457,12 +487,15 @@ function focusOnHotel(index) {
     const hotel = hotels[index];
     const marker = markers[index];
 
+    // Center map on hotel
     map.setCenter(hotel.geometry.location);
     map.setZoom(16);
 
+    // Close info window and open the selected one
     infoWindow.close();
 
     if (marker) {
+        // Trigger the marker's click event to show detailed info
         google.maps.event.trigger(marker, 'click');
     }
 }
@@ -498,7 +531,93 @@ function setLoading(loading) {
 
 function showError(message) {
     const container = document.getElementById('hotels-container');
-    container.innerHTML = `<div class="no-results"> ${message}</div>`;
+    container.innerHTML = `<div class="no-results">❌ ${message}</div>`;
+}
+
+function addToSelectedHotels(index) {
+    const hotel = hotels[index];
+
+    // Check if hotel is already selected
+    if (selectedHotels.some(selected => selected.place_id === hotel.place_id)) {
+        return;
+    }
+
+    selectedHotels.push(hotel);
+    updateSelectedHotelsDisplay();
+    displayHotelsList(); // Refresh to update button states
+}
+
+function removeFromSelectedHotels(placeId) {
+    selectedHotels = selectedHotels.filter(hotel => hotel.place_id !== placeId);
+    updateSelectedHotelsDisplay();
+    displayHotelsList(); // Refresh to update button states
+}
+
+function updateSelectedHotelsDisplay() {
+    const container = document.getElementById('selected-hotels-container');
+    const countElement = document.querySelector('.selected-count');
+    const itineraryButton = document.getElementById('view-itinerary-btn');
+
+    // Update count
+    countElement.textContent = `${selectedHotels.length} hotel${selectedHotels.length !== 1 ? 's' : ''} selected`;
+
+    // Show/hide itinerary button
+    if (selectedHotels.length > 0) {
+        itineraryButton.style.display = 'block';
+    } else {
+        itineraryButton.style.display = 'none';
+    }
+
+    if (selectedHotels.length === 0) {
+        container.innerHTML = '<div class="no-selected">No hotels selected yet. Click "Add to List" on any hotel to add it here.</div>';
+        return;
+    }
+
+    const selectedHtml = selectedHotels.map(hotel => `
+        <div class="selected-hotel-item">
+            <button class="remove-hotel-btn" onclick="removeFromSelectedHotels('${hotel.place_id}')" title="Remove from list">
+                ✕
+            </button>
+            <div class="selected-hotel-name">${hotel.name}</div>
+            <div class="selected-hotel-details">
+                <div class="selected-hotel-detail rating">
+                    ⭐ ${hotel.rating ? hotel.rating.toFixed(1) : 'Not rated'}
+                </div>
+                <div class="selected-hotel-detail price-level">
+                    💰 ${hotel.price_level ? '$'.repeat(hotel.price_level) : 'Price not available'}
+                </div>
+                <div class="selected-hotel-detail">
+                    📍 ${hotel.vicinity || 'Address not available'}
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    container.innerHTML = selectedHtml;
+}
+
+function viewItinerary() {
+    const hotelData = selectedHotels.map(hotel => ({
+        name: hotel.name,
+        rating: hotel.rating,
+        price_level: hotel.price_level,
+        vicinity: hotel.vicinity,
+        place_id: hotel.place_id,
+        geometry: {
+            location: {
+                lat: hotel.geometry.location.lat(),
+                lng: hotel.geometry.location.lng()
+            }
+        }
+    }));
+
+    // In a real application, you would navigate to another page
+    // For demo purposes, we'll show an alert
+
+    //alert(`Ready to view itinerary with ${selectedHotels.length} selected hotels!\n\nIn a real app, this would navigate to:\n/itinerary or /my-plans`);
+
+    // Example of how you might navigate:
+    // window.location.href = `/itinerary?hotels=${encodeURIComponent(JSON.stringify(hotelData))}`;
 }
 
 window.initMap = initMap;

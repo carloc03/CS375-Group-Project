@@ -78,7 +78,7 @@ nav a:hover {
 }
 
 .sidebar {
-    width: 400px;
+    width: 300px;
     background: white;
     border-right: 1px solid #ddd;
     overflow-y: auto;
@@ -87,11 +87,66 @@ nav a:hover {
 .map-container {
     flex: 1;
     position: relative;
+    min-width: 0;
 }
 
 #map {
     height: 100%;
     width: 100%;
+}
+
+.selected-hotels-sidebar {
+    width: 300px;
+    background: white;
+    border-left: 1px solid #ddd;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.selected-hotels-header {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.selected-hotels-header h3 {
+    color: #2c3e50;
+    font-size: 18px;
+    margin-bottom: 0.25rem;
+}
+
+.selected-count {
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.selected-hotels-list {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.selected-hotels-actions {
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    background: #f8f9fa;
+}
+
+.itinerary-btn {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+    font-weight: 500;
+}
+
+.itinerary-btn:hover {
+    background-color: #229954;
 }
 
 .hotels-list {
@@ -143,6 +198,7 @@ nav a:hover {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    margin-bottom: 0.75rem;
 }
 
 .hotel-detail {
@@ -160,6 +216,92 @@ nav a:hover {
     font-weight: bold;
 }
 
+.hotel-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.add-hotel-btn {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    flex: 1;
+}
+
+.add-hotel-btn:hover {
+    background-color: #229954;
+}
+
+.add-hotel-btn:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
+
+.view-on-map-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    flex: 1;
+}
+
+.view-on-map-btn:hover {
+    background-color: #2980b9;
+}
+
+.selected-hotel-item {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.selected-hotel-name {
+    font-weight: bold;
+    font-size: 14px;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.selected-hotel-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.selected-hotel-detail {
+    font-size: 12px;
+    color: #555;
+}
+
+.remove-hotel-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 10px;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+.remove-hotel-btn:hover {
+    background-color: #c0392b;
+}
+
 .loading {
     text-align: center;
     padding: 2rem;
@@ -170,6 +312,14 @@ nav a:hover {
     text-align: center;
     padding: 2rem;
     color: #7f8c8d;
+}
+
+.no-selected {
+    text-align: center;
+    padding: 2rem;
+    color: #7f8c8d;
+    font-size: 14px;
+    line-height: 1.4;
 }
 
 .clear-btn {
@@ -187,6 +337,16 @@ nav a:hover {
     background-color: #c0392b;
 }
 
+@media (max-width: 1024px) {
+    .selected-hotels-sidebar {
+        display: none;
+    }
+
+    .sidebar {
+        width: 350px;
+    }
+}
+
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
@@ -199,5 +359,9 @@ nav a:hover {
 
     .map-container {
         height: 60%;
+    }
+
+    .selected-hotels-sidebar {
+        display: none;
     }
 }
