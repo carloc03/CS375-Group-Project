@@ -5,12 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotels Finder</title>
-    <style>
-        #map {
-            height: 400px;
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
@@ -19,31 +14,84 @@
         <a href="#">My Plans</a>
         <a href="#">Account</a>
     </nav>
-
-    <form>
-        <label for="city">City:</label>
-        <input type="text" id="city" name="city">
-
-        <br><br>
-
-        <label for="country">Country:</label>
-        <input type="text" id="country" name="country">
-
-        <br><br>
-
-        <button type="button" id="search-btn">Search</button>
-
-        <br><br>
-
-        <div id="map">
-            <!-- Google Maps API will be loaded here -->
+    <div class="container">
+        <div class="sidebar">
+            <div class="search-form">
+                <div class="form-group">
+                    <label for="country-select">Country:</label>
+                    <select id="country-select" name="country-select">
+                        <option value="all">All Countries</option>
+                        <option value="fr" selected>France</option>
+                        <option value="es">Spain</option>
+                        <option value="us">United States</option>
+                        <option value="cn">China</option>
+                        <option value="it">Italy</option>
+                        <option value="tr">Turkey</option>
+                        <option value="mx">Mexico</option>
+                        <option value="th">Thailand</option>
+                        <option value="de">Germany</option>
+                        <option value="uk">United Kingdom</option>
+                        <option value="jp">Japan</option>
+                        <option value="at">Austria</option>
+                        <option value="gr">Greece</option>
+                        <option value="my">Malaysia</option>
+                        <option value="ae">UAE</option>
+                        <option value="pt">Portugal</option>
+                        <option value="ru">Russia</option>
+                        <option value="ca">Canada</option>
+                        <option value="nl">Netherlands</option>
+                        <option value="sa">Saudi Arabia</option>
+                        <option value="hk">Hong Kong</option>
+                        <option value="hr">Croatia</option>
+                        <option value="eg">Egypt</option>
+                        <option value="pl">Poland</option>
+                        <option value="in">India</option>
+                        <option value="hu">Hungary</option>
+                        <option value="cz">Czech Republic</option>
+                        <option value="ma">Morocco</option>
+                        <option value="sg">Singapore</option>
+                        <option value="tn">Tunisia</option>
+                        <option value="dk">Denmark</option>
+                        <option value="cl">Chile</option>
+                        <option value="fi">Finland</option>
+                        <option value="ie">Ireland</option>
+                        <option value="kr">South Korea</option>
+                        <option value="no">Norway</option>
+                        <option value="za">South Africa</option>
+                        <option value="au">Australia</option>
+                        <option value="ar">Argentina</option>
+                        <option value="se">Sweden</option>
+                        <option value="id">Indonesia</option>
+                        <option value="il">Israel</option>
+                        <option value="be">Belgium</option>
+                        <option value="ph">Philippines</option>
+                        <option value="jo">Jordan</option>
+                        <option value="ba">Bosnia and Herzegovina</option>
+                        <option value="br">Brazil</option>
+                        <option value="tw">Taiwan</option>
+                        <option value="bg">Bulgaria</option>
+                        <option value="vn">Vietnam</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city" placeholder="Enter a city name">
+                </div>
+                <button type="button" id="search-btn">Search Hotels</button>
+                <button type="button" id="clear-btn" class="clear-btn" style="display: none;">Clear Results</button>
+            </div>
+            <div class="hotels-list">
+                <div id="hotels-container">
+                    <div class="no-results">
+                        Enter a city and country above to search for hotels
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <br><br>
-
-        <button type="button">Check Out Hotels</button>
-    </form>
-
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 
