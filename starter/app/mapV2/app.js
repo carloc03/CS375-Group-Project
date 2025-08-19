@@ -73,6 +73,21 @@ function initMap() {
         address: p.address, name: p.name || "", notes: p.notes || ""
       }));
       console.log("Plan items (ordered):", payload);
+
+      let params = new URL(document.location.toString()).searchParams;
+      let planId = params.get("id");
+
+      fetch("/post-plan?id=" + planId, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            plan: payload
+        }),
+    }).then(response => {
+      console.log("OK");
+    });
       alert("Plan saved (client-side only). Check the console for the payload.");
     });
   }
