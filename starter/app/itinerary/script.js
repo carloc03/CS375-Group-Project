@@ -2,7 +2,7 @@ let params = new URL(document.location.toString()).searchParams;
 let planId = params.get("id");
 console.log(planId);
 
-fetch("/plans-test?id=" + planId).then((response) => {
+fetch("/get-plan?id=" + planId).then((response) => {
     response.json().then((body) => {
         console.log(body);
         let flightInfo = body.flights;
