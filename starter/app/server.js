@@ -222,6 +222,23 @@ app.get("/plans", async (req, res) => {
   });
 });
 
+app.get("/plans-test", async (req, res) => {
+  pool.query(
+    `
+    SELECT *
+    FROM travel_planners
+    WHERE id = $1
+    `,
+    [req.query.id]
+  ).then(result => {
+    console.log(result.rows[0]);
+    res.json(result.rows[0]);
+  }).catch(err => {
+    console.error(err);
+    res.sendStatus(500);
+  });
+});
+
 app.get("/api/plans", (req, res) => {
   let city = req.query.city;
   let country = req.query.country;
@@ -336,6 +353,22 @@ app.post("/login", async (req, res) => {
     return res.sendStatus(400);
   }
 })
+
+app.post("/post-plan", async (req, res) => {
+  let body = req.body;
+  console.log(body);
+  pool.query(
+    `UPDATE travel_planners
+    SET landmarks = $1
+    WHERE id = $2`,
+    [body, req.query.id],
+  ).then((result) => {
+    console.log("Inserted:");
+    console.log(result.rows);
+    res.statusCode = 200;
+    res.send();
+  })
+});
 
 app.post("/logout", (req, res) => {
   let { token } = req.cookies;
