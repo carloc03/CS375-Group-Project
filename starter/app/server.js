@@ -224,7 +224,7 @@ app.get("/plans", async (req, res) => {
   });
 });
 
-app.get("/plans-test", async (req, res) => {
+app.get("/get-plan", async (req, res) => {
   pool.query(
     `
     SELECT *
