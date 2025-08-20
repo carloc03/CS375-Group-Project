@@ -20,8 +20,8 @@
                 <div class="form-group">
                     <label for="country-select">Country:</label>
                     <select id="country-select" name="country-select">
-                        <option value="all">All Countries</option>
-                        <option value="fr" selected>France</option>
+                        <option value="all" selected>All Countries</option>
+                        <option value="fr">France</option>
                         <option value="es">Spain</option>
                         <option value="us">United States</option>
                         <option value="cn">China</option>
@@ -90,6 +90,22 @@
         </div>
         <div class="map-container">
             <div id="map"></div>
+        </div>
+        <div class="selected-hotels-sidebar">
+            <div class="selected-hotels-header">
+                <h3>My Hotel List</h3>
+                <div class="selected-count">0 hotels selected</div>
+            </div>
+            <div class="selected-hotels-list">
+                <div id="selected-hotels-container">
+                    <div class="no-selected">No hotels selected yet. Click "Add to List" on any hotel to add it here.
+                    </div>
+                </div>
+            </div>
+            <div class="selected-hotels-actions">
+                <button type="button" id="view-landmarks-btn" class="landmarks-btn" style="display: none;">View
+                    Landmarks</button>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>

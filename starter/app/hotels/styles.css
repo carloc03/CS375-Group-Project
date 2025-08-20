@@ -133,7 +133,7 @@ nav a:hover {
     background: #f8f9fa;
 }
 
-.itinerary-btn {
+.landmarks-btn {
     background-color: #27ae60;
     color: white;
     border: none;
@@ -145,7 +145,7 @@ nav a:hover {
     font-weight: 500;
 }
 
-.itinerary-btn:hover {
+.landmarks-btn:hover {
     background-color: #229954;
 }
 

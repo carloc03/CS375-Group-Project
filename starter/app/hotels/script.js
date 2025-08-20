@@ -8,7 +8,6 @@ let selectedHotels = [];
 
 const countryRestrict = { country: "fr" };
 const countries = {
-    // Top 10 Most Visited Countries
     fr: {
         center: { lat: 46.2276, lng: 2.2137 },
         zoom: 5,
@@ -212,7 +211,6 @@ const countries = {
     },
 };
 
-// Dynamically load Google Maps API with key from server
 fetch('/mapV2/config/maps-api-url')
     .then(response => response.json())
     .then(data => {
@@ -240,8 +238,6 @@ function initMap() {
     infoWindow = new google.maps.InfoWindow();
     places = new google.maps.places.PlacesService(map);
 
-    // Create the autocomplete object and associate it with the UI input control.
-    // Restrict the search to the default country (France), and to place type "cities".
     autocomplete = new google.maps.places.Autocomplete(
         document.getElementById("city"),
         {
@@ -253,7 +249,6 @@ function initMap() {
 
     autocomplete.addListener("place_changed", onPlaceChanged);
 
-    // Add a DOM event listener to react when the user selects a country.
     const countrySelect = document.getElementById("country-select");
     if (countrySelect) {
         countrySelect.addEventListener("change", setAutocompleteCountry);
@@ -261,13 +256,12 @@ function initMap() {
 
     const searchButton = document.getElementById('search-btn');
     const clearButton = document.getElementById('clear-btn');
-    const itineraryButton = document.getElementById('view-itinerary-btn');
+    const landmarksButton = document.getElementById('view-landmarks-btn');
 
     if (searchButton) searchButton.addEventListener('click', search);
     if (clearButton) clearButton.addEventListener('click', clearResults);
-    if (itineraryButton) itineraryButton.addEventListener('click', viewItinerary);
+    if (landmarksButton) landmarksButton.addEventListener('click', viewLandmarks);
 
-    // Allow Enter key to trigger search
     document.getElementById('city').addEventListener('keypress', handleEnterKey);
 }
 
@@ -277,8 +271,6 @@ function handleEnterKey(event) {
     }
 }
 
-// When the user selects a city, get the place details for the city and
-// zoom the map in on the city.
 function onPlaceChanged() {
     const place = autocomplete.getPlace();
 
@@ -286,7 +278,6 @@ function onPlaceChanged() {
         map.panTo(place.geometry.location);
         map.setZoom(15);
 
-        // Add location marker
         new google.maps.Marker({
             position: place.geometry.location,
             map: map,
@@ -303,7 +294,6 @@ function onPlaceChanged() {
     }
 }
 
-// Search for hotels in the selected city, within the viewport of the map.
 function search() {
     const bounds = map.getBounds();
     if (!bounds) {
@@ -321,7 +311,7 @@ function search() {
 
     places.nearbySearch(searchRequest, (results, status, pagination) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-            hotels = results.slice(0, 20); // Limit to 20 hotels
+            hotels = results.slice(0, 20);
             setLoading(false);
             displayHotelsList();
             createHotelMarkers();
@@ -333,8 +323,6 @@ function search() {
     });
 }
 
-// Set the country restriction based on user input.
-// Also center and zoom the map on the given country.
 function setAutocompleteCountry() {
     const countrySelect = document.getElementById("country-select");
     const country = countrySelect.value;
@@ -382,7 +370,7 @@ function displayHotelsList() {
           </div>
           ${hotel.opening_hours ?
                 `<div class="hotel-detail">
-              ${hotel.opening_hours.open_now ? '🟢 Open now' : '🔴 Closed'}
+              ${hotel.opening_hours.open_now ? 'Open now' : 'Closed'}
             </div>` : ''
             }
         </div>
@@ -403,7 +391,6 @@ function displayHotelsList() {
 }
 
 function createHotelMarkers() {
-    // Clear existing hotel markers (keep location marker)
     markers.forEach(marker => marker.setMap(null));
     markers = [];
 
@@ -434,7 +421,6 @@ function showInfoWindow() {
                 return;
             }
 
-            // Close all other info windows
             infoWindow.close();
 
             const content = createDetailedInfoWindowContent(place);
@@ -487,15 +473,12 @@ function focusOnHotel(index) {
     const hotel = hotels[index];
     const marker = markers[index];
 
-    // Center map on hotel
     map.setCenter(hotel.geometry.location);
     map.setZoom(16);
 
-    // Close info window and open the selected one
     infoWindow.close();
 
     if (marker) {
-        // Trigger the marker's click event to show detailed info
         google.maps.event.trigger(marker, 'click');
     }
 }
@@ -537,35 +520,32 @@ function showError(message) {
 function addToSelectedHotels(index) {
     const hotel = hotels[index];
 
-    // Check if hotel is already selected
     if (selectedHotels.some(selected => selected.place_id === hotel.place_id)) {
         return;
     }
 
     selectedHotels.push(hotel);
     updateSelectedHotelsDisplay();
-    displayHotelsList(); // Refresh to update button states
+    displayHotelsList();
 }
 
 function removeFromSelectedHotels(placeId) {
     selectedHotels = selectedHotels.filter(hotel => hotel.place_id !== placeId);
     updateSelectedHotelsDisplay();
-    displayHotelsList(); // Refresh to update button states
+    displayHotelsList();
 }
 
 function updateSelectedHotelsDisplay() {
     const container = document.getElementById('selected-hotels-container');
     const countElement = document.querySelector('.selected-count');
-    const itineraryButton = document.getElementById('view-itinerary-btn');
+    const landmarksButton = document.getElementById('view-landmarks-btn');
 
-    // Update count
     countElement.textContent = `${selectedHotels.length} hotel${selectedHotels.length !== 1 ? 's' : ''} selected`;
 
-    // Show/hide itinerary button
     if (selectedHotels.length > 0) {
-        itineraryButton.style.display = 'block';
+        landmarksButton.style.display = 'block';
     } else {
-        itineraryButton.style.display = 'none';
+        landmarksButton.style.display = 'none';
     }
 
     if (selectedHotels.length === 0) {
@@ -596,7 +576,7 @@ function updateSelectedHotelsDisplay() {
     container.innerHTML = selectedHtml;
 }
 
-function viewItinerary() {
+function viewLandmarks() {
     const hotelData = selectedHotels.map(hotel => ({
         name: hotel.name,
         rating: hotel.rating,
@@ -611,13 +591,25 @@ function viewItinerary() {
         }
     }));
 
-    // In a real application, you would navigate to another page
-    // For demo purposes, we'll show an alert
-
-    //alert(`Ready to view itinerary with ${selectedHotels.length} selected hotels!\n\nIn a real app, this would navigate to:\n/itinerary or /my-plans`);
-
-    // Example of how you might navigate:
-    // window.location.href = `/itinerary?hotels=${encodeURIComponent(JSON.stringify(hotelData))}`;
+    window.location.href = '../mapV2/index.html';
 }
+
+window.addEventListener('load', function () {
+    const countrySelect = document.getElementById('country-select');
+    if (countrySelect) {
+        countrySelect.value = 'all';
+    }
+
+    const cityField = document.getElementById('city');
+    if (cityField) {
+        cityField.value = '';
+    }
+
+    if (autocomplete) {
+        autocomplete.setComponentRestrictions({ country: [] });
+        map.setCenter({ lat: 15, lng: 0 });
+        map.setZoom(2);
+    }
+});
 
 window.initMap = initMap;
