@@ -108,6 +108,7 @@ app.use('/map', express.static("map"));
 app.use('/mapV2', express.static("mapV2"));
 app.use("/planner", express.static("planner"));
 app.use('/hotels', express.static("hotels"));
+app.use('/explore', express.static("explore"));
 
 app.get("/flights", (req, res) => {
   let from = req.query.from;
