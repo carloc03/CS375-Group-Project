@@ -1,5 +1,10 @@
 "use strict";
 
+// get plan id from url
+let params = new URL(document.location.toString()).searchParams;
+let planId = params.get("id");
+console.log(planId)
+
 let map, geocoder, infoWindow;
 let planItems = [];
 let dragSrcIndex = null;
@@ -74,9 +79,6 @@ function initMap() {
       }));
       console.log("Plan items (ordered):", payload);
 
-      let params = new URL(document.location.toString()).searchParams;
-      let planId = params.get("id");
-
       fetch("/post-plan?id=" + planId, {
         method: "POST",
         headers: {
@@ -87,6 +89,7 @@ function initMap() {
         }),
     }).then(response => {
       console.log("OK");
+      location.assign("/plan?id=" + planId);
     });
       alert("Plan saved (client-side only). Check the console for the payload.");
     });
