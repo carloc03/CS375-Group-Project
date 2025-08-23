@@ -102,7 +102,7 @@ app.use("/create-account", express.static("registration"));
 app.use("/login", express.static("login"));
 
 app.use("/plan-creation", express.static("plan_creation"));
-app.use("/planCreation", express.static("planCreation")));
+app.use("/planCreation", express.static("planCreation"));
 app.use("/search-flights", express.static("flights"));
 app.use('/map', express.static("map"));
 app.use('/mapV2', express.static("mapV2"));
