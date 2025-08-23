@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Create a Plan • TripTracker</title>
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Use the same stylesheet as Home for a perfect match -->
+  <link rel="stylesheet" href="/home/styles.css" />
+  <style>
+    /* extra tweaks for this page only (card spacing) */
+    .wrapper { width: 90%; max-width: 1200px; margin: -3.5rem auto 3rem; position: relative; z-index: 4; }
+    .tw-card { background:#fff; border:0; border-radius:1rem; padding:2rem; box-shadow:0 20px 40px rgba(0,0,0,.12); }
+    .section-title { font-size:1.1rem; font-weight:700; margin-bottom:.5rem; }
+    .form-label { font-weight:600; }
+    .checklist .form-check { padding:.85rem 1rem; border-radius:.75rem; border:1px solid rgba(0,0,0,.08); background:#fff; }
+    .checklist .form-check + .form-check { margin-top:.75rem; }
+  </style>
+</head>
+<body>
+  <!-- Exact same header as Home -->
+  <header>
+    <nav>
+      <div class="container nav-inner">
+        <a href="/home" class="logo">TripTracker</a>
+        <ul class="nav-links">
+          <li><a href="/search-flights">Search Flights</a></li>
+          <li><a href="/planCreation/">Create a Plan</a></li>
+        </ul>
+        <a href="/logout" class="btn-sign" id="logout">Logout</a>
+      </div>
+    </nav>
+    <div class="container hero-content">
+      <h1>Create Your Trip Plan</h1>
+      <p>Name it, set your destination, and choose what to include.</p>
+</div>
+  </header>
+
+  <main class="wrapper" id="form">
+    <div class="tw-card">
+      <form id="planForm" novalidate>
+        <!-- Plan Details -->
+        <div class="mb-4">
+          <div class="section-title">Plan Details</div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="planName" class="form-label">Plan Name</label>
+              <input type="text" class="form-control" id="planName" placeholder="e.g., Summer in Tokyo" required />
+              <div class="invalid-feedback">Please give your plan a name.</div>
+              <div class="form-text">You can change this later from your itinerary.</div>
+            </div>
+            <div class="col-md-6">
+              <label for="destination" class="form-label">Destination</label>
+              <input type="text" class="form-control" id="destination" placeholder="City, Country" required />
+              <div class="invalid-feedback">Please enter a destination.</div>
+              <div class="form-text">Tip: Try “Paris, France” or “Kyoto, Japan”.</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <!-- Checklist -->
+        <div class="mb-3">
+          <div class="section-title">Include in Your Plan</div>
+          <p class="form-text mb-2">We’ll start with the first checked item in the list.</p>
+          <div class="checklist">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="includeFlights" checked />
+              <label class="form-check-label fw-semibold" for="includeFlights">Flights</label>
+              <small>Find and book flights that fit your schedule.</small>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="includeHotels" checked />
+              <label class="form-check-label fw-semibold" for="includeHotels">Hotels</label>
+              <small>Browse stays by price, rating, and neighborhood.</small>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="includeLandmarks" checked />
+              <label class="form-check-label fw-semibold" for="includeLandmarks">Landmarks</label>
+              <small>Discover attractions and must‑see spots on the map.</small>
+            </div>
+          </div>
+          <div id="checklistHelp" class="invalid-feedback d-block" style="display:none;">
+            Please select at least one section to continue.
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary btn-lg">Start planning</button>
+          <a href="/home" class="btn btn-link">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <small>&copy; <span id="year"></span> TripTracker. All rights reserved.</small>
+    </div>
+  </footer>
+
+  <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- Reuse Home's logout code -->
+  <script src="/home/script.js"></script>
+  <script src="./script.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
