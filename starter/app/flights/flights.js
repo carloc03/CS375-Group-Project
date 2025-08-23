@@ -244,7 +244,6 @@ document.getElementById('submitSelectedFlights').addEventListener('click', funct
     };
 
     fetch("/flights", {
-        
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -253,13 +252,16 @@ document.getElementById('submitSelectedFlights').addEventListener('click', funct
             flightData : flightData 
         }),
     }).then(response => {
+      response.json().then((body) => {
         console.log(response.status)
+        console.log(body)
         if(response.status == 200){
             console.log("OK")
+            location.assign("/mapsv2?id=" + body.id)
         }else{
             console.log("BAD")
-
         }
         console.log(response);
-    })
+      })
+    });
 });

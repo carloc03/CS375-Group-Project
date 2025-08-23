@@ -139,8 +139,11 @@ app.post("/flights", (req, res) => {
     RETURNING id
     `,
     [email, flightData]
-  ).then(() => {
-    res.status(200).json({ message: "Flight saved successfully" });
+  ).then((result) => {
+    res.status(200).json({ 
+      message: "Flight saved successfully",
+      id: result.rows[0].id
+    });
   })
     .catch((error) => {
       console.log(error);
