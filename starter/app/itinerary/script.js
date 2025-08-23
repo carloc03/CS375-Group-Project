@@ -49,12 +49,14 @@ fetch("/get-plan?id=" + planId).then((response) => {
         
             let cardTitle = document.createElement("h5");
             cardTitle.className = "card-title";
-            cardTitle.textContent = landmark.address;
+            cardTitle.textContent = landmark.name;
             divBody.appendChild(cardTitle);
         
             let cardSubtitle = document.createElement("h6");
             cardSubtitle.className = "card-subtitle mb-2 text-muted";
-            cardSubtitle.textContent = "lat: " + landmark.lat + ", long: " + landmark.lng;
+            cardSubtitle.textContent = landmark.address + "\r\n";
+            cardSubtitle.textContent += "lat: " + landmark.lat + ", long: " + landmark.lng;
+            cardSubtitle.setAttribute('style', 'white-space: pre;');
             divBody.appendChild(cardSubtitle);
         
             let cardText = document.createElement("p");

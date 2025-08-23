@@ -89,6 +89,7 @@ function initMap() {
         }),
     }).then(response => {
       console.log("OK");
+      location.assign("/plan?id=" + planId);
     });
       alert("Plan saved (client-side only). Check the console for the payload.");
     });

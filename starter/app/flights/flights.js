@@ -257,7 +257,7 @@ document.getElementById('submitSelectedFlights').addEventListener('click', funct
         console.log(body)
         if(response.status == 200){
             console.log("OK")
-            location.assign("/mapsv2?id=" + body.id)
+            location.assign("/mapv2?id=" + body.id)
         }else{
             console.log("BAD")
         }
