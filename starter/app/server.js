@@ -142,7 +142,7 @@ app.post("/flights", (req, res) => {
     `,
     [email, flightData]
   ).then((result) => {
-    res.status(200).json({ 
+    res.status(200).json({
       message: "Flight saved successfully",
       id: result.rows[0].id
     });
@@ -373,6 +373,57 @@ app.post("/post-plan", async (req, res) => {
     res.statusCode = 200;
     res.send();
   })
+});
+
+app.post("/api/travel-planners/hotels", async (req, res) => {
+  const { travel_planner_id, category, data } = req.body;
+
+  if (!travel_planner_id || !data) {
+    return res.status(400).json({
+      error: 'Missing required fields: travel_planner_id and data'
+    });
+  }
+
+  try {
+    const plannerCheck = await pool.query(
+      'SELECT id FROM travel_planners WHERE id = $1',
+      [travel_planner_id]
+    );
+
+    if (plannerCheck.rows.length === 0) {
+      return res.status(404).json({
+        error: `Travel planner with ID ${travel_planner_id} not found`
+      });
+    }
+
+    const updateQuery = `
+      UPDATE travel_planners 
+      SET 
+        hotels = $1,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $2
+      RETURNING id, hotels
+    `;
+
+    const result = await pool.query(updateQuery, [
+      JSON.stringify(data),
+      travel_planner_id
+    ]);
+
+    res.json({
+      success: true,
+      travel_planner_id: travel_planner_id,
+      hotels_count: data.hotels ? data.hotels.length : 0,
+      saved_at: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({
+      error: 'Failed to save hotels data',
+      message: error.message
+    });
+  }
 });
 
 app.post("/logout", (req, res) => {

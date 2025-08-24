@@ -576,22 +576,84 @@ function updateSelectedHotelsDisplay() {
     container.innerHTML = selectedHtml;
 }
 
-function viewLandmarks() {
-    const hotelData = selectedHotels.map(hotel => ({
-        name: hotel.name,
-        rating: hotel.rating,
-        price_level: hotel.price_level,
-        vicinity: hotel.vicinity,
-        place_id: hotel.place_id,
-        geometry: {
-            location: {
-                lat: hotel.geometry.location.lat(),
-                lng: hotel.geometry.location.lng()
+async function viewLandmarks() {
+    if (selectedHotels.length === 0) {
+        alert('No hotels selected. Please add some hotels to your list first.');
+        return;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const travelPlannerId = urlParams.get('id');
+
+    if (!travelPlannerId) {
+        alert('Error: No travel planner ID found in URL. Please make sure you have ?id=XXX in your URL.');
+        return;
+    }
+
+    const hotelData = {
+        travel_planner_id: travelPlannerId,
+        category: 'hotels',
+        data: {
+            timestamp: new Date().toISOString(),
+            search_location: {
+                country: document.getElementById('country-select').value,
+                city: document.getElementById('city').value
+            },
+            hotels: selectedHotels.map(hotel => ({
+                place_id: hotel.place_id,
+                name: hotel.name,
+                rating: hotel.rating || null,
+                price_level: hotel.price_level || null,
+                vicinity: hotel.vicinity || 'Address not available',
+                coordinates: {
+                    lat: hotel.geometry.location.lat(),
+                    lng: hotel.geometry.location.lng()
+                },
+                types: hotel.types || [],
+                user_ratings_total: hotel.user_ratings_total || null,
+                photos: hotel.photos ? hotel.photos.slice(0, 3).map(photo => ({
+                    reference: photo.photo_reference || null,
+                    url: photo.getUrl ? photo.getUrl({ maxWidth: 400 }) : null
+                })) : []
+            })),
+            metadata: {
+                total_hotels_found: hotels.length,
+                selected_count: selectedHotels.length,
+                saved_at: new Date().toISOString()
             }
         }
-    }));
+    };
 
-    window.location.href = '../mapV2/index.html';
+    try {
+        const button = document.getElementById('view-landmarks-btn');
+        const originalText = button.textContent;
+        button.textContent = 'Saving Hotels...';
+        button.disabled = true;
+
+        const response = await fetch('/api/travel-planners/hotels', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(hotelData)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || 'Unknown error'}`);
+        }
+
+        const result = await response.json();
+        alert(`Successfully saved ${selectedHotels.length} hotels for travel planner ${travelPlannerId}!`);
+
+    } catch (error) {
+        console.error('Error saving hotels to database:', error);
+        alert(`Failed to save hotels: ${error.message}`);
+    } finally {
+        const button = document.getElementById('view-landmarks-btn');
+        button.textContent = originalText;
+        button.disabled = false;
+    }
 }
 
 window.addEventListener('load', function () {
