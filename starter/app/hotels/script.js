@@ -582,13 +582,8 @@ async function viewLandmarks() {
         return;
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const travelPlannerId = urlParams.get('id');
-
-    if (!travelPlannerId) {
-        alert('Error: No travel planner ID found in URL. Please make sure you have ?id=XXX in your URL.');
-        return;
-    }
+    // Use hardcoded travel planner ID of 22
+    const travelPlannerId = '22';
 
     const hotelData = {
         travel_planner_id: travelPlannerId,
