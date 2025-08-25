@@ -14,6 +14,11 @@
 
   <main class="layout">
     <section class="map-wrap">
+      <div class="map-search" role="search" aria-label="Search place">
+        <input id="placeSearch" type="text" placeholder="Search a place (e.g., Paris)" aria-label="Search a place" />
+        <button id="searchBtn" class="btn primary" aria-label="Go to place">Go</button>
+      </div>
+
       <div id="map" aria-label="Interactive map"></div>
       <div class="hint">Click on the map to add places to your plan.</div>
     </section>

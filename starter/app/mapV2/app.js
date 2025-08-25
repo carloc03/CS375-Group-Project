@@ -51,7 +51,7 @@ function initMap() {
   geocoder = new google.maps.Geocoder();
   infoWindow = new google.maps.InfoWindow();
 
-  const fallback = { lat: 48.5, lng: 14.5, zoom: 5 };
+  const fallback = { lat: 39.8283, lng: -98.5795, zoom: 4 }; // sets it to Kansas cuz it's in the middle of the US, the zoom is enough to display the entire country
   map = new google.maps.Map($("map"), {
     center: { lat: fallback.lat, lng: fallback.lng },
     zoom: fallback.zoom,
@@ -63,6 +63,8 @@ function initMap() {
       map.setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude });
     }, function(){});
   }
+  
+  bindMapSearch();
 
   map.addListener("click", function (e) {
     reverseGeocode(e.latLng)
@@ -106,6 +108,35 @@ function initMap() {
   }
 
   renderList();
+}
+
+function bindMapSearch(){
+  const input = $("placeSearch");
+  const go = $("searchBtn");
+  if (!input || !go) return;
+
+  const performSearch = () => {
+    const q = (input.value || "").trim();
+    if (!q) return;
+    geocoder.geocode({ address: q }, (results, status) => {
+      if (status === "OK" && results && results[0]) {
+        const g = results[0].geometry;
+        if (g.viewport) {
+          map.fitBounds(g.viewport);
+        } else if (g.location) {
+          map.setCenter(g.location);
+          map.setZoom(12);
+        }
+      } else {
+        alert("Place not found. Try a more specific query.");
+      }
+    });
+  };
+
+  go.addEventListener("click", performSearch);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") performSearch();
+  });
 }
 
 function reverseGeocode(latLng) {
@@ -164,7 +195,12 @@ function removePlace(i) {
 }
 function setName(i, value, lock) {
   const it = planItems[i]; if (!it) return;
-  it.name = String(value || "").trim();
+  const name = String(value || "").trim();
+  if (!name) {
+    alert("Please enter a name for this place.");
+    return;
+  }
+  it.name = name;
   it.nameLocked = !!lock;
   renderList();
 }
@@ -205,7 +241,8 @@ function updateHeader() {
   const saveBtn = $("savePlan");
   const clearBtn = $("clearAll");
   if (countEl) countEl.textContent = `(${planItems.length})`;
-  if (saveBtn) saveBtn.disabled = !planItems.length;
+  const allNamed = planItems.every(p => p.name && p.name.trim() !== "");
+  if (saveBtn) saveBtn.disabled = !planItems.length || !allNamed;
   if (clearBtn) clearBtn.disabled = !planItems.length;
 }
 
@@ -243,7 +280,7 @@ function renderList() {
       d.addEventListener("click", () => toggleNameEdit(i, true));
       nameRow.append(d);
     } else {
-      const input = el("input", "name-input", { placeholder: "Add a custom name (e.g., Lunch spot)", value: item.name || "" });
+      const input = el("input", "name-input", { placeholder: "Enter a name (required)", value: item.name || "", required: true });
       const save  = el("button", "btn sm success", { textContent: "Save" });
       save.addEventListener("click", () => setName(i, input.value, true));
       nameRow.append(input, save);

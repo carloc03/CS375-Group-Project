@@ -26,8 +26,22 @@ body{
 @media (max-width:1100px){ .layout{grid-template-columns:1fr} }
 .map-wrap,.list-wrap{height:78vh;background:var(--panel);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
 
+.map-wrap{ position:relative; }
+
 #map{height:calc(100% - 42px);width:100%}
 .hint{padding:10px 12px;border-top:1px solid var(--border);color:var(--muted);font-size:14px;background:#fbfdff}
+
+.map-search{
+  position:absolute; top:12px; left:12px; right:auto; z-index:5;
+  display:flex; gap:8px; align-items:center;
+  background:#ffffffcc; backdrop-filter:saturate(1.2) blur(2px);
+  border:1px solid var(--border); border-radius:12px; padding:8px; box-shadow:var(--shadow-soft);
+}
+.map-search input{
+  width:280px; max-width:56vw;
+  padding:9px 12px; border:1px solid var(--border); border-radius:10px; outline:none; background:#fff; color:var(--text);
+}
+.map-search input:focus{ border-color:#a5d8ff; box-shadow:0 0 0 4px var(--ring); }
 
 .list-wrap{display:flex;flex-direction:column}
 .list-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1;background:var(--panel)}
