@@ -31,3 +31,14 @@ CREATE TABLE IF NOT EXISTS session_storage (
     session_token TEXT NOT NULL,
     email TEXT NOT NULL
 );
+
+CREATE TABLE travel_planners (
+    id SERIAL PRIMARY KEY, 
+    plan_name TEXT NOT NULL,
+    email TEXT NOT NULL, 
+    flights JSONB DEFAULT '{}', 
+    hotels JSONB DEFAULT '{}', 
+    landmarks JSONB DEFAULT '{}', 
+    created_at TIMESTAMP DEFAULT NOW(), 
+    updated_at TIMESTAMP DEFAULT NOW() 
+); 
