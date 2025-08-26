@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TripTracker - Explore Landmarks</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="container nav-inner">
+        <a href="/" class="logo">TripTracker</a>
+        <ul class="nav-links">
+		  <li><a href="/home">Home</a></li>
+          <li><a href="/planCreation">Create a Plan</a></li>
+          <li><a href="/saved-plans">View Saved Plans</a></li>
+        </ul>
+        <a href="/logout" class="btn-sign" id="logout">Logout</a>
+      </div>
+    </nav>
+
+    <div class="container hero-content">
+      <h1>Explore Top Landmarks</h1>
+      <p>Discover the must-see sights in any city before you build your plan.</p>
+	  <p>Type a city to see the top places to visit!</p>
+    </div>
+  </header>
+
+  <main id="explore" class="container page-content">
+    <form id="searchForm" class="search">
+      <input id="city" name="city" placeholder="Search a city (e.g., Rome, Tokyo, New York)…" autocomplete="off" />
+      <button type="submit" id="searchBtn" aria-label="Explore">Explore</button>
+    </form>
+
+    <div id="meta" class="meta"></div>
+    <div id="results" class="results" aria-live="polite"></div>
+  </main>
+
+  <template id="cardTemplate">
+    <article class="card">
+      <div class="thumb-wrap">
+        <img class="thumb" alt="">
+      </div>
+      <div class="content">
+        <h3 class="name"></h3>
+        <p class="line rating"></p>
+        <p class="line address"></p>
+        <div class="actions">
+          <a class="maps" target="_blank" rel="noopener">View on Google Maps</a>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>

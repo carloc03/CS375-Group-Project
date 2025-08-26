@@ -110,6 +110,7 @@ app.use("/planner", express.static("planner"));
 app.use('/hotels', express.static("hotels"));
 app.use('/explore', express.static("explore"));
 app.use("/saved-plans", authorize, express.static("saved-plans"));
+app.use('/explore-landmarks', express.static("explore-landmarks"));
 
 app.get("/flights", (req, res) => {
   let from = req.query.from;
@@ -466,6 +467,82 @@ app.get("/mapV2/config/maps-api-url", (req, res) => {
   const url = `https://maps.googleapis.com/maps/api/js?key=${mapsKey}&v=weekly`;
   res.json({ url });
 });
+
+// explore-landmarks functionality //
+const LANDMARKS_TTL_MS = 24 * 60 * 60 * 1000;
+const landmarksCache = new Map();
+
+app.get("/api/landmarks", async (req, res) => {
+  try {
+    const cityRaw = (req.query.city || "").trim();
+    if (!cityRaw) return res.status(400).json({ error: "city required" });
+    if (!mapsKey) return res.status(500).json({ error: "Maps key not configured" });
+
+    const cityKey = cityRaw.toLowerCase();
+    const cached = landmarksCache.get(cityKey);
+    if (cached && (Date.now() - cached.ts) < LANDMARKS_TTL_MS) {
+      return res.json(cached.data);
+    }
+
+	// search location
+    const geo = await axios.get("https://maps.googleapis.com/maps/api/geocode/json", {
+      params: { address: cityRaw, key: mapsKey }
+    });
+    const loc = geo.data?.results?.[0]?.geometry?.location;
+    if (!loc) return res.status(404).json({ error: "city not found" });
+    const search = await axios.get("https://maps.googleapis.com/maps/api/place/textsearch/json", {
+      params: { query: `top sights in ${cityRaw}`, key: mapsKey, language: "en" }
+    });
+    let results = Array.isArray(search.data?.results) ? search.data.results : [];
+
+    // Rank by rating and review count, displays top 15
+    const score = v => (v.rating || 0) * Math.log(1 + (v.user_ratings_total || 0));
+    results = results.sort((a, b) => score(b) - score(a)).slice(0, 15);
+
+    const landmarks = results.map(p => ({
+      place_id: p.place_id,
+      name: p.name,
+      location: p.geometry?.location || null,
+      address: p.formatted_address ?? p.vicinity ?? "",
+      rating: p.rating ?? null,
+      user_ratings_total: p.user_ratings_total ?? 0,
+      open_now: p.opening_hours?.open_now ?? null,
+      photo_ref: p.photos?.[0]?.photo_reference ?? null,
+      maps_url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}&query_place_id=${p.place_id}`
+    }));
+
+    const payload = { city: cityRaw, center: loc, landmarks };
+
+    landmarksCache.set(cityKey, { ts: Date.now(), data: payload });
+    res.json(payload);
+  } catch (e) {
+    console.error("LANDMARKS API ERROR:", e.response?.data || e.message);
+    res.status(500).json({ error: "failed to fetch landmarks" });
+  }
+});
+
+// To display photos on the explore-landmarks page
+app.get("/api/photo", async (req, res) => {
+  try {
+    const ref = (req.query.ref || "").trim();
+    if (!ref) return res.status(400).end();
+    if (!mapsKey) return res.status(500).json({ error: "Maps key not configured" });
+
+    const url = "https://maps.googleapis.com/maps/api/place/photo";
+    const r = await axios.get(url, {
+      params: { maxwidth: 600, photo_reference: ref, key: mapsKey },
+      responseType: "stream"
+    });
+
+    if (r.headers["content-type"]) res.setHeader("Content-Type", r.headers["content-type"]);
+    if (r.headers["cache-control"]) res.setHeader("Cache-Control", r.headers["cache-control"]);
+    r.data.pipe(res);
+  } catch (e) {
+    console.error("PHOTO API ERROR:", e.response?.data || e.message);
+    res.status(500).end();
+  }
+});
+// explore-landmarks end //
 
 app.listen(port, hostname, () => {
   console.log(`Listening at: http://${hostname}:${port}`);
