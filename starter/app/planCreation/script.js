@@ -69,7 +69,8 @@
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            planName: planNameEl.value
+            planName: planNameEl.value,
+            planDestination: destEl.value
         }),
       }).then(response => {
         response.json().then((body) => {

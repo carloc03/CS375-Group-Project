@@ -132,14 +132,15 @@ app.post("/make-plan", (req, res) => {
   const email = tokenStorage[token];
 
   const planName = req.body.planName;
+  const planDestination = req.body.planDestination;
 
   pool.query(
     `
-    INSERT INTO travel_planners (email, plan_name)
-    VALUES ($1, $2)
+    INSERT INTO travel_planners (email, plan_name, plan_destination)
+    VALUES ($1, $2, $3)
     RETURNING id
     `,
-    [email, planName]
+    [email, planName, planDestination]
   ).then((result) => {
     res.status(200).json({
       message: "Plan created successfully",
