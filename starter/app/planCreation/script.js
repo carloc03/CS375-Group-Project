@@ -6,6 +6,7 @@
     const form = document.getElementById('planForm');
     const planNameEl = document.getElementById('planName');
     const destEl = document.getElementById('destination');
+    /*
     const flightsEl = document.getElementById('includeFlights');
     const hotelsEl = document.getElementById('includeHotels');
     const landmarksEl = document.getElementById('includeLandmarks');
@@ -40,7 +41,7 @@
     function showChecklistError(show) {
       checklistHelp.style.display = show ? 'block' : 'none';
     }
-  
+  */
     form.addEventListener('submit', function (e) {
       // native constraint validation
       if (!form.checkValidity()) {
@@ -49,23 +50,43 @@
         form.classList.add('was-validated');
         return;
       }
+      /*
       // group rule
       if (!atLeastOneChecked()) {
         e.preventDefault();
         e.stopPropagation();
         showChecklistError(true);
         return;
-      }
+      }*/
   
       // ok to proceed
       e.preventDefault();
-      showChecklistError(false);
-      persistBasics();
-      const target = firstCheckedPathInOrder();
-      if (target) window.location.assign(target);
+      //showChecklistError(false);
+      //persistBasics();
+      fetch("/make-plan", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            planName: planNameEl.value
+        }),
+      }).then(response => {
+        response.json().then((body) => {
+          console.log(response.status)
+          console.log(body)
+          if(response.status == 200){
+              console.log("OK")
+              location.assign("/search-flights?id=" + body.id);
+          }else{
+              console.log("BAD")
+          }
+          console.log(response);
+        })
+      });
     });
   
-    [flightsEl, hotelsEl, landmarksEl].forEach(cb => {
+    /*[flightsEl, hotelsEl, landmarksEl].forEach(cb => {
       cb.addEventListener('change', () => showChecklistError(!atLeastOneChecked()));
-    });
+    });*/
   })();

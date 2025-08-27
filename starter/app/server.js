@@ -126,26 +126,23 @@ app.get("/flights", (req, res) => {
       res.status(500).json({ error: "Failed to get data." });
     });
 });
-app.post("/flights", (req, res) => {
+
+app.post("/make-plan", (req, res) => {
   const token = req.cookies.token;
   const email = tokenStorage[token];
 
-  if (!email) {
-    return res.status(401).json({ message: "Failed because of email" });
-  }
-
-  const { flightData } = req.body;
+  const planName = req.body.planName;
 
   pool.query(
     `
-    INSERT INTO travel_planners (email, flights)
+    INSERT INTO travel_planners (email, plan_name)
     VALUES ($1, $2)
     RETURNING id
     `,
-    [email, flightData]
+    [email, planName]
   ).then((result) => {
     res.status(200).json({
-      message: "Flight saved successfully",
+      message: "Plan created successfully",
       id: result.rows[0].id
     });
   })
@@ -153,23 +150,68 @@ app.post("/flights", (req, res) => {
       console.log(error);
       res.sendStatus(500);
     });
-
-  /*
-  const {flightNumber, origin, destination, departure, returnDate, adults, children, infants, travelClass, cost, duration,} = flightData;
-  pool.query(
-    `INSERT INTO flight(flightNumber, origin, destination, departure, returnDate, adults, children, infants, travelClass, cost, duration) 
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
-    [flightNumber, origin, destination, departure, returnDate, adults, children, infants, travelClass, cost, duration,]
-  ).then(result => {
-    console.log('Flight saved successfully');
-    res.status(200).json({ message: "Flight saved successfully" });
-  })
-  .catch(error => {
-    console.log(error);
-    res.sendStatus(500);
-  })
-    */
 });
+
+app.post("/post-plan-flights", (req, res) => {
+  const token = req.cookies.token;
+  const email = tokenStorage[token];
+
+  if (!email) {
+    return res.status(401).json({ message: "Failed because of email" });
+  }
+
+  const body = req.body.flightData;
+
+  pool.query(
+    `UPDATE travel_planners
+    SET flights = $1
+    WHERE id = $2`,
+    [body, req.query.id],
+  ).then((result) => {
+    console.log("Updated:");
+    console.log(result.rows);
+    res.statusCode = 200;
+    res.send();
+  })
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(500);
+    });
+});
+
+app.post("/post-plan-hotels", (req, res) => {
+  let body = req.body.hotelData.data;
+  console.log(req.body);
+  console.log(req.query.id);
+  pool.query(
+    `UPDATE travel_planners
+    SET hotels = $1
+    WHERE id = $2`,
+    [body, req.query.id],
+  ).then((result) => {
+    console.log("Updated:");
+    console.log(result.rows);
+    res.statusCode = 200;
+    res.send();
+  })
+});
+
+app.post("/post-plan-map", async (req, res) => {
+  let body = req.body;
+  console.log(body);
+  pool.query(
+    `UPDATE travel_planners
+    SET landmarks = $1
+    WHERE id = $2`,
+    [body, req.query.id],
+  ).then((result) => {
+    console.log("Updated:");
+    console.log(result.rows);
+    res.statusCode = 200;
+    res.send();
+  })
+});
+
 app.get("/amadeus/token", async (req, res) => {
   try {
     const tokenRes = await axios.post("https://test.api.amadeus.com/v1/security/oauth2/token",
@@ -360,22 +402,6 @@ app.post("/login", async (req, res) => {
     return res.sendStatus(400);
   }
 })
-
-app.post("/post-plan", async (req, res) => {
-  let body = req.body;
-  console.log(body);
-  pool.query(
-    `UPDATE travel_planners
-    SET landmarks = $1
-    WHERE id = $2`,
-    [body, req.query.id],
-  ).then((result) => {
-    console.log("Inserted:");
-    console.log(result.rows);
-    res.statusCode = 200;
-    res.send();
-  })
-});
 
 app.post("/api/travel-planners/hotels", async (req, res) => {
   const { travel_planner_id, category, data } = req.body;

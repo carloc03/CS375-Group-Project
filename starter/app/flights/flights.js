@@ -1,3 +1,8 @@
+// get plan id from url
+let params = new URL(document.location.toString()).searchParams;
+let planId = params.get("id");
+console.log(planId)
+
 const cityOptions = [
   { value: "ATL", label: "Atlanta, GA (ATL)" }, { value: "LAX", label: "Los Angeles, CA (LAX)" },
   { value: "ORD", label: "Chicago, IL (ORD)" }, { value: "DFW", label: "Dallas/Fort Worth, TX (DFW)" },
@@ -243,7 +248,7 @@ document.getElementById('submitSelectedFlights').addEventListener('click', funct
         duration: itinerary.duration
     };
 
-    fetch("/flights", {
+    fetch("/post-plan-flights?id=" + planId, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -252,16 +257,13 @@ document.getElementById('submitSelectedFlights').addEventListener('click', funct
             flightData : flightData 
         }),
     }).then(response => {
-      response.json().then((body) => {
-        console.log(response.status)
-        console.log(body)
-        if(response.status == 200){
-            console.log("OK")
-            location.assign("/mapv2?id=" + body.id)
-        }else{
-            console.log("BAD")
-        }
-        console.log(response);
-      })
-    });
+      console.log(response.status)
+      if(response.status == 200){
+          console.log("OK")
+          location.assign("/hotels?id=" + planId)
+      }else{
+          console.log("BAD")
+      }
+      console.log(response);
+    })
 });

@@ -81,7 +81,7 @@ function initMap() {
       }));
       console.log("Plan items (ordered):", payload);
 
-      fetch("/post-plan?id=" + planId, {
+      fetch("/post-plan-map?id=" + planId, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

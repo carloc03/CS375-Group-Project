@@ -1,3 +1,8 @@
+// get plan id from url
+let params = new URL(document.location.toString()).searchParams;
+let planId = params.get("id");
+console.log(planId)
+
 let map;
 let places;
 let infoWindow;
@@ -583,10 +588,10 @@ async function viewLandmarks() {
     }
 
     // Use hardcoded travel planner ID of 22
-    const travelPlannerId = '22';
+    //const travelPlannerId = '22';
 
     const hotelData = {
-        travel_planner_id: travelPlannerId,
+        //travel_planner_id: travelPlannerId,
         category: 'hotels',
         data: {
             timestamp: new Date().toISOString(),
@@ -619,36 +624,45 @@ async function viewLandmarks() {
         }
     };
 
-    try {
-        const button = document.getElementById('view-landmarks-btn');
-        const originalText = button.textContent;
-        button.textContent = 'Saving Hotels...';
-        button.disabled = true;
+    const button = document.getElementById('view-landmarks-btn');
+    const originalText = button.textContent;
+    button.textContent = 'Saving Hotels...';
+    button.disabled = true;
 
-        const response = await fetch('/api/travel-planners/hotels', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(hotelData)
-        });
+    // const response = await fetch('/api/travel-planners/hotels', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(hotelData)
+    // });
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || 'Unknown error'}`);
+    // if (!response.ok) {
+    //     const errorData = await response.json().catch(() => ({}));
+    //     throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || 'Unknown error'}`);
+    // }
+
+    // const result = await response.json();
+    fetch("/post-plan-hotels?id=" + planId, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            hotelData
+        }),
+    }).then(response => {
+        console.log(response.status)
+        if(response.status == 200){
+            console.log("OK")
+            location.assign("/mapv2?id=" + planId)
+        }else{
+            console.log("BAD")
         }
-
-        const result = await response.json();
-        alert(`Successfully saved ${selectedHotels.length} hotels for travel planner ${travelPlannerId}!`);
-
-    } catch (error) {
-        console.error('Error saving hotels to database:', error);
-        alert(`Failed to save hotels: ${error.message}`);
-    } finally {
-        const button = document.getElementById('view-landmarks-btn');
-        button.textContent = originalText;
-        button.disabled = false;
-    }
+        console.log(response);
+    })
+    alert(`Successfully saved ${selectedHotels.length} hotels for travel planner ${travelPlannerId}!`);
+    
 }
 
 window.addEventListener('load', function () {
