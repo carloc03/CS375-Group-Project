@@ -8,10 +8,12 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-light">
+    <div class="d-flex justify-content-center my-5">
+        <button id="export" class="btn btn-primary">Export as PDF </button>
+    </div>
     <header>
         <div class="container">
         <h1 class="fw-bold display-6" style="margin-bottom: 1rem;"><span class="text-dark">Trip</span> Itinerary</h1>
-
         <div class="card">
             <div class="card-body", id="flight-info">
                 <h5 class="card-title">Flight Details</h5>
@@ -48,5 +50,20 @@
     </main>
       
     <script src="script.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById("export").addEventListener("click", () => {
+            const element = document.querySelector(".container");
+            const opt = {
+                margin: 1,
+                filename: "planner.pdf",
+                image: { type: "jpeg", quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: "in", format: "letter", orientation: "portrait" }
+            };
+            html2pdf().set(opt).from(element).save();
+        });
+    </script>
 </body>
 </html>
