@@ -90,6 +90,7 @@ app.use("/", express.static("../node_modules/bootstrap/dist/"));
 app.use(express.json());
 
 app.use('/images', express.static("images"));
+app.use('/navbar', express.static("navbar"));
 
 app.use("/", redirectHomeIfLoggedIn, express.static("public"));
 
