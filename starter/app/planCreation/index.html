@@ -6,7 +6,7 @@
   <title>Create a Plan • TripTracker</title>
   <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/home/styles.css">
+  <link rel="stylesheet" href="/styles.css">
   <style>
     .wrapper { width: 90%; max-width: 1200px; margin: -3.5rem auto 3rem; position: relative; z-index: 4; }
     .tw-card { background:#fff; border:0; border-radius:1rem; padding:2rem; box-shadow:0 20px 40px rgba(0,0,0,.12); }
@@ -15,27 +15,40 @@
     .checklist .form-check { padding:.85rem 1rem; border-radius:.75rem; border:1px solid rgba(0,0,0,.08); background:#fff; }
     .checklist .form-check + .form-check { margin-top:.75rem; }
   </style>
+
+<style>
+  body.compact-header header{
+    height: 120px !important;
+    min-height: 120px !important;
+    max-height: 120px !important;
+    overflow: hidden;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  body.compact-header header .hero-content{ display:none !important; }
+  body.compact-header .wrapper,
+  body.compact-header main,
+  body.compact-header .container:first-of-type{
+    margin-top: 1rem !important;
+  }
+</style>
+
 </head>
-<body>
+<body class="compact-header">
   <header>
-    <nav>
-      <div class="container nav-inner">
-        <a href="#" class="logo">TripTracker</a>
-        <ul class="nav-links">
-		  <li><a href="/explore-landmarks">Explore Landmarks</a></li>
-      <li><a href="/explore">Explore Flights</a></li>
-		  <li><a href="/planCreation">Create a Plan</a></li>
-      <li><a href="/saved-plans">View Saved Plans</a></li>
-        </ul>
-        <a href="/logout" class="btn-sign" id="logout">Logout</a>
-      </div>
-    </nav>
-    <div class="container hero-content">
-      <h1>Plan. Explore. Share.</h1>
-      <p>Your all-in-one travel itinerary builder with maps, weather, and more.</p>
-      <a href="#features" class="btn-primary">Learn More</a>
+  <nav>
+    <div class="container nav-inner">
+      <a href="/home" class="logo">TripTracker</a>
+      <ul class="nav-links">
+        <li><a href="/explore-landmarks">Explore Landmarks</a></li>
+        <li><a href="/explore">Explore Flights</a></li>
+        <li><a href="/planCreation">Create a Plan</a></li>
+        <li><a href="/saved-plans">View Saved Plans</a></li>
+      </ul>
+      <a href="/logout" class="btn-sign" id="logout">Logout</a>
     </div>
-  </header>
+  </nav>
+</header>
 
   <main class="wrapper" id="form">
     <div class="tw-card">
