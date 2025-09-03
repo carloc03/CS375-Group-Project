@@ -6,32 +6,92 @@ fetch("/get-plan?id=" + planId).then((response) => {
     response.json().then((body) => {
         let planNameLabel = document.getElementById("plan-name");
         planNameLabel.textContent = body['plan_name']
+        
+        console.log(body.flights);
 
-        let flightInfo = body.flights.flightData;
-        
-        let flightInfoCard = document.getElementById("flight-info")
-        
-        let doNotInclude = ["origin", "departure", "duration", "returnDate", "destination"]
-        
-        document.getElementById("airport").textContent += flightInfo.origin;
-        
-        document.getElementById("startDate").textContent = flightInfo.departure;
-        document.getElementById("endDate").textContent = flightInfo.returnDate;
-        document.getElementById("destination").textContent = flightInfo.destination;
-        
-        for (var flightDetail in flightInfo){
-            if(!doNotInclude.includes(flightDetail)){
-                console.log(flightDetail);
+        // Flight Cards
+        if(body.flights.hasOwnProperty("flightData")){
+            let flightInfo = body.flights.flightData;
+
+            let flightDetailInclude = {"cost": "Flight Cost", "travelClass": "Travel Class", "flightNumber": "FlightNumber",
+            "adults": "Adults", "infants": "Infants", "children": "Children"};
+            
+            document.getElementById("airport").textContent += flightInfo.origin;
+            
+            document.getElementById("startDate").textContent = flightInfo.departure;
+            document.getElementById("endDate").textContent = flightInfo.returnDate;
+            document.getElementById("destination").textContent = flightInfo.destination;
+            
+            let flightInfoCardRow1 = document.getElementById("flight-info-row-1");
+            let flightInfoCardRow2 = document.getElementById("flight-info-row-2");
+
+            let i = 0;
+            for (var flightDetail in flightDetailInclude){
+                let detailCol = document.createElement("div");
+                detailCol.className = "col-md-4";
+
+
                 let detailP = document.createElement("p");
                 detailP.className = "card-text";
-                detailP.textContent = flightDetail + ": " + flightInfo[flightDetail];
+
+                if(flightInfo[flightDetail]){
+                    detailP.textContent = flightDetailInclude[flightDetail] + ": " + flightInfo[flightDetail];
+                }else{
+                    detailP.textContent = flightDetailInclude[flightDetail] + ": N/A"
+                }
         
-                flightInfoCard.appendChild(detailP);
+                detailCol.appendChild(detailP);
+
+                if (i < 3) {
+                    flightInfoCardRow1.appendChild(detailCol);
+                } else {
+                    flightInfoCardRow2.appendChild(detailCol);
+                }
+                i++;
             }
+        } else {
+            console.log("WDADS")
+            document.getElementById("airport").textContent = "A flight was not selected.";
         }
-        
-        //<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        
+
+        // Hotel Cards
+        if(body.hotels.hasOwnProperty("hotelData")){
+            let hotelData = body.hotels.hotelData.data;
+            let hotelContainer = document.getElementById("hotels");
+            document.getElementById('hotels-amount').textContent += hotelData.hotels.length
+            for (var key in hotelData.hotels){
+                let hotel = hotelData.hotels[key];
+                console.log(hotel)
+
+                let hotelCard = document.createElement('div');
+                hotelCard.className = "card";
+            
+                let divBody = document.createElement('div');
+                divBody.className = "card-body";
+                hotelCard.appendChild(divBody);
+            
+                let cardTitle = document.createElement("h5");
+                cardTitle.className = "card-title";
+                cardTitle.textContent = hotel.name;
+                divBody.appendChild(cardTitle);
+            
+                let cardSubtitle = document.createElement("h6");
+                cardSubtitle.className = "card-subtitle mb-2 text-muted";
+                cardSubtitle.textContent = hotel.vicinity + "\r\n";
+                cardSubtitle.textContent += "lat: " + hotel.coordinates.lat + ", long: " + hotel.coordinates.lng;
+                cardSubtitle.setAttribute('style', 'white-space: pre;');
+                divBody.appendChild(cardSubtitle);
+            
+                let cardText = document.createElement("p");
+                cardText.className = "card-text";
+                cardText.textContent = "Rating: " + hotel.rating + " stars out of " + hotel.user_ratings_total + " reviews"
+                divBody.appendChild(cardText);
+            
+                hotelContainer.appendChild(hotelCard);
+            }
+        }else{
+            document.getElementById("hotels-amount").textContent += "No Hotels were Selected"
+        }
         
         let landMarks = body.landmarks;
         
