@@ -18,12 +18,10 @@ const useSSL =
   process.env.NODE_ENV === "production" ||
   (process.env.DATABASE_URL || "").includes("render.com");
 
-
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: useSSL ? { rejectUnauthorized: false } : false,
 });
-
 
 const flightKey = process.env.FLIGHT_KEY;
 const flightUrl = process.env.FLIGHT_URL;
@@ -51,7 +49,6 @@ async function loadTokenStorageFromDatabase() {
     );
   } catch (error) {
     console.log("SELECT FAILED", error);
-
     // 500: Internal Server Error - Something wrong with DB
     return res.sendStatus(500);
   }
@@ -108,7 +105,7 @@ app.use("/search-flights", authorize, express.static("flights"));
 app.use('/map', authorize, express.static("map"));
 app.use('/mapV2', authorize, express.static("mapV2"));
 app.use("/planner", express.static("planner"));
-app.use('/hotels', authorize, authorize, express.static("hotels"));
+app.use('/hotels', authorize, express.static("hotels"));
 app.use('/explore', express.static("explore"));
 app.use("/saved-plans", authorize, express.static("saved-plans"));
 app.use('/explore-landmarks', express.static("explore-landmarks"));
@@ -162,7 +159,8 @@ app.post("/post-plan-flights", (req, res) => {
     return res.status(401).json({ message: "Failed because of email" });
   }
 
-  const body = req.body
+  // Handle both data structures
+  const body = req.body.flightData || req.body;
   console.log(body);
 
   pool.query(
@@ -183,8 +181,10 @@ app.post("/post-plan-flights", (req, res) => {
 });
 
 app.post("/post-plan-hotels", (req, res) => {
-  let body = req.body
-  console.log(body);
+  // Handle both data structures
+  let body = req.body.hotelData?.data || req.body;
+  console.log(req.body);
+  console.log(req.query.id);
   pool.query(
     `UPDATE travel_planners
     SET hotels = $1
@@ -196,6 +196,10 @@ app.post("/post-plan-hotels", (req, res) => {
     res.statusCode = 200;
     res.send();
   })
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(500);
+    });
 });
 
 app.post("/post-plan-map", async (req, res) => {
@@ -212,6 +216,10 @@ app.post("/post-plan-map", async (req, res) => {
     res.statusCode = 200;
     res.send();
   })
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(500);
+    });
 });
 
 app.get("/amadeus/token", async (req, res) => {
@@ -225,7 +233,7 @@ app.get("/amadeus/token", async (req, res) => {
     );
     res.json({ access_token: tokenRes.data.access_token });
   } catch (error) {
-    res.status(500);
+    res.status(500).json({ error: "Failed to get Amadeus token" });
   }
 });
 
@@ -247,6 +255,10 @@ app.post("/create-account", (req, res) => {
     res.statusCode = 200;
     res.send();
   })
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(500);
+    });
 })
 
 app.get("/plans", async (req, res) => {
@@ -259,7 +271,7 @@ app.get("/plans", async (req, res) => {
 
   pool.query(
     `
-    SELECT id, flights, hotels, landmarks, created_at, updated_at
+    SELECT id, plan_name, plan_destination, flights, hotels, landmarks, created_at, updated_at
     FROM travel_planners
     WHERE email = $1
     ORDER BY created_at DESC
@@ -331,6 +343,65 @@ app.get("/api/plans", (req, res) => {
     .catch(error => {
       console.log("Server error:", error);
       res.status(500).json({ message: "Failed to get weather data" });
+    });
+});
+
+// Weather API endpoint - matching what the combined JavaScript expects
+app.get("/weather", (req, res) => {
+  let location = req.query.location;
+  let startDate = req.query.startDate;
+  let endDate = req.query.endDate;
+
+  if (!location) {
+    return res.status(400).json({ message: "Location is required" });
+  }
+
+  // Parse location string (format: "City,Country")
+  let [city, country] = location.split(',');
+  city = city?.trim();
+  country = country?.trim();
+
+  if (!city) {
+    return res.status(400).json({ message: "Invalid location format. Use: City,Country" });
+  }
+
+  let query = country ? `${city},${country}` : city;
+  let geocodeUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=1&appid=${weatherKey}`;
+
+  console.log("Weather request for:", query);
+  console.log("Date range:", startDate, "to", endDate);
+
+  axios(geocodeUrl)
+    .then(geoResponse => {
+      if (geoResponse.data.length === 0) {
+        return res.status(404).json({ message: "Location not found" });
+      }
+
+      let lat = geoResponse.data[0].lat;
+      let lon = geoResponse.data[0].lon;
+
+      console.log("Coordinates found:", lat, lon);
+
+      let forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${weatherKey}&units=imperial`;
+      return axios(forecastUrl);
+    })
+    .then(forecastResponse => {
+      res.json({
+        location: { city, country: country || 'Unknown' },
+        coordinates: {
+          lat: forecastResponse.data.city.coord.lat,
+          lon: forecastResponse.data.city.coord.lon
+        },
+        forecast: forecastResponse.data,
+        travelDates: { startDate, endDate }
+      });
+    })
+    .catch(error => {
+      console.error("Weather API error:", error.message);
+      if (error.response) {
+        console.error("API response error:", error.response.data);
+      }
+      res.status(500).json({ message: "Failed to get weather data", error: error.message });
     });
 });
 
@@ -512,7 +583,7 @@ app.get("/api/landmarks", async (req, res) => {
       return res.json(cached.data);
     }
 
-	// search location
+    // search location
     const geo = await axios.get("https://maps.googleapis.com/maps/api/geocode/json", {
       params: { address: cityRaw, key: mapsKey }
     });
@@ -571,6 +642,103 @@ app.get("/api/photo", async (req, res) => {
   }
 });
 // explore-landmarks end //
+
+// display photos on the saved-plans page functionality //
+const CITY_HERO_TTL_MS = 24 * 60 * 60 * 1000;
+const cityHeroCache = new Map();
+
+app.get("/api/city-hero", async (req, res) => {
+  try {
+    const cityRaw = (req.query.city || "").trim();
+    if (!cityRaw) return res.status(400).json({ error: "city required" });
+    if (!mapsKey) return res.status(500).json({ error: "Maps key not configured" });
+
+    const cityKey = cityRaw.toLowerCase();
+    const now = Date.now();
+
+    const cached = cityHeroCache.get(cityKey);
+    if (cached && (now - cached.ts) < CITY_HERO_TTL_MS) {
+      if (cached.ref) {
+        const r = await axios.get("https://maps.googleapis.com/maps/api/place/photo", {
+          params: { maxwidth: 1600, photo_reference: cached.ref, key: mapsKey },
+          responseType: "stream"
+        });
+        if (r.headers["content-type"]) res.setHeader("Content-Type", r.headers["content-type"]);
+        return r.data.pipe(res);
+      } else if (cached.staticUrl) {
+        const r = await axios.get(cached.staticUrl, { responseType: "stream" });
+        if (r.headers["content-type"]) res.setHeader("Content-Type", r.headers["content-type"]);
+        return r.data.pipe(res);
+      }
+    }
+
+    // queries to use for finding the best photo
+    const queries = [
+      `${cityRaw} landmarks`,
+      `${cityRaw} skyline`,
+      `top sights in ${cityRaw}`
+    ];
+
+    const candidates = []; // { ref, width, height, isLandscape, score }
+
+    for (const q of queries) {
+      const search = await axios.get("https://maps.googleapis.com/maps/api/place/textsearch/json", {
+        params: { query: q, key: mapsKey, language: "en" }
+      });
+
+      const results = Array.isArray(search.data?.results) ? search.data.results : [];
+      for (const p of results) {
+        const placeScore = (p.rating || 0) * Math.log(1 + (p.user_ratings_total || 0));
+        for (const ph of (p.photos || [])) {
+          if (!ph.photo_reference) continue;
+          const w = ph.width || 0;
+          const h = ph.height || 0;
+          const isLandscape = w >= h;
+
+          // set preference for wider images, penalize portrait orientation
+          let score = placeScore * (1 + Math.min(w / 1600, 1));
+          if (/night/i.test(q)) score *= 1.05;
+          if (!isLandscape) score *= 0.6;
+
+          candidates.push({ ref: ph.photo_reference, width: w, height: h, isLandscape, score });
+        }
+      }
+
+      // exit if a good image is found
+      if (candidates.some(c => c.isLandscape && c.score > 5)) break;
+    }
+
+    // choose best from selection
+    let best = candidates.filter(c => c.isLandscape).sort((a, b) => b.score - a.score)[0];
+    if (!best && candidates.length) best = candidates.sort((a, b) => b.score - a.score)[0];
+
+    if (best?.ref) {
+      cityHeroCache.set(cityKey, { ts: now, ref: best.ref });
+      const r = await axios.get("https://maps.googleapis.com/maps/api/place/photo", {
+        params: { maxwidth: 1600, photo_reference: best.ref, key: mapsKey },
+        responseType: "stream"
+      });
+      if (r.headers["content-type"]) res.setHeader("Content-Type", r.headers["content-type"]);
+      return r.data.pipe(res);
+    }
+
+    // fallback if no image is found, a map of the city will be displayed instead
+    const geo = await axios.get("https://maps.googleapis.com/maps/api/geocode/json", {
+      params: { address: cityRaw, key: mapsKey }
+    });
+    const loc = geo.data?.results?.[0]?.geometry?.location;
+    const staticUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(cityRaw)}&zoom=${loc ? 11 : 3}&size=600x360&scale=2&maptype=roadmap&key=${mapsKey}`;
+    cityHeroCache.set(cityKey, { ts: now, staticUrl });
+    const r = await axios.get(staticUrl, { responseType: "stream" });
+    if (r.headers["content-type"]) res.setHeader("Content-Type", r.headers["content-type"]);
+    return r.data.pipe(res);
+
+  } catch (e) {
+    console.error("CITY HERO ERROR:", e.response?.status, e.response?.data || e.message);
+    return res.status(500).json({ error: "failed to fetch city hero" });
+  }
+});
+// saved-plans image display end //
 
 app.listen(port, hostname, () => {
   console.log(`Listening at: http://${hostname}:${port}`);

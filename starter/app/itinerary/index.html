@@ -1,99 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Log In</title>
-  <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-  <link rel="stylesheet" type="text/css" href="style.css">
-  <link rel="stylesheet" type="text/css" href="../navbar/navbar.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log In</title>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="../navbar/navbar.css">
 </head>
+
 <body class="bg-light">
     <header class="header-nav">
         <nav>
             <div class="container nav-inner">
-              <a href="/home" class="logo">TripTracker</a>
-              <ul class="nav-links">
-                <li><a href="/explore-landmarks">Explore Landmarks</a></li>
-            <li><a href="/explore">Explore Flights</a></li>
-                <li><a href="/planCreation">Create a Plan</a></li>
-            <li><a href="/saved-plans">View Saved Plans</a></li>
-              </ul>
-              <button id="export" class="btn btn-primary">Export as PDF </button>
-              <a href="/logout" class="btn-sign" id="logout">Logout</a>
+                <a href="/home" class="logo">TripTracker</a>
+                <ul class="nav-links">
+                    <li><a href="/explore-landmarks">Explore Landmarks</a></li>
+                    <li><a href="/explore">Explore Flights</a></li>
+                    <li><a href="/planCreation">Create a Plan</a></li>
+                    <li><a href="/saved-plans">View Saved Plans</a></li>
+                </ul>
+                <button id="export" class="btn btn-primary">Export as PDF</button>
+                <a href="/logout" class="btn-sign" id="logout">Logout</a>
             </div>
-          </nav>
+        </nav>
     </header>
-  <div id="export-all">
-    <header>
-        <div class="itinerary-header">
-            <div class="container">
-              <div class="d-flex justify-content-between align-items-center">
-                <i class="bi bi-cloud-fill text-light header-icon"></i>
-                
-                <div class="text-center flex-grow-1">
-                  <h1 class="fw-bold display-6 mb-1">Travel Itinerary</h1>
-                  <h2 class="fw-bold fs-4 text-light" id="plan-name">Johnsons Family</h2>
+
+    <div id="export-all">
+        <header>
+            <div class="itinerary-header">
+                <div class="container">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <i class="bi bi-cloud-fill text-light header-icon"></i>
+
+                        <div class="text-center flex-grow-1">
+                            <h1 class="fw-bold display-6 mb-1">Travel Itinerary</h1>
+                            <h2 class="fw-bold fs-4 text-light" id="plan-name">Johnsons Family</h2>
+                        </div>
+
+                        <i class="bi bi-airplane-fill text-light header-icon"></i>
+                    </div>
                 </div>
-                
-                <i class="bi bi-airplane-fill text-light header-icon"></i>
-              </div>
             </div>
-          </div>
-          
-          <div class="container my-4">
+
+            <div class="container my-4">
+                <div class="card">
+                    <div class="card-body" id="flight-info">
+                        <h5 class="card-title"><u>Flight Details</u></h5>
+                        <h6 class="card-subtitle mb-2 text-muted" id="airport">Airport: </h6>
+                        <div class="row" id="flight-info-row-1"></div>
+                        <div class="row mt-2" id="flight-info-row-2"></div>
+                    </div>
+                </div>
+
+                <div class="trip-info mt-4">
+                    <!-- Destination Row -->
+                    <div class="info-row">
+                        <div class="info-label">DESTINATION:</div>
+                        <div class="info-value" id="destination">----</div>
+                    </div>
+
+                    <!-- Arrival / Departure Row -->
+                    <div class="info-row">
+                        <div class="info-label">START DATE:</div>
+                        <div class="info-value" id="startDate">--/--/----</div>
+
+                        <div class="info-label">END DATE:</div>
+                        <div class="info-value" id="endDate">--/--/----</div>
+                    </div>
+                </div>
+
+                <!-- Weather content section -->
+                <div id="weatherContent" class="mt-4"></div>
+            </div>
+        </header>
+
+        <!-- Hotels Section -->
+        <main class="container my-4" id="hotels">
+            <h1 class="fw-bold display-6" style="margin-top: 1rem;"><span class="text-dark">Hotels</span></h1>
             <div class="card">
-              <div class="card-body" id="flight-info">
-                <h5 class="card-title"><u>Flight Details</u></h5>
-                <h6 class="card-subtitle mb-2 text-muted" id="airport">Airport: </h6>
-                <div class="row" id="flight-info-row-1"></div>
-                <div class="row mt-2" id="flight-info-row-2"> </div>
-              </div>
             </div>
-
-            <div class="trip-info mt-4">
-                <!-- Destination Row -->
-                <div class="info-row">
-                  <div class="info-label">DESTINATION:</div>
-                  <div class="info-value" id="destination">----</div>
-                </div>
-              
-                <!-- Arrival / Departure Row -->
-                <div class="info-row">
-                  <div class="info-label">START DATE:</div>
-                  <div class="info-value" id="startDate">--/--/----</div>
-              
-                  <div class="info-label">END DATE:</div>
-                  <div class="info-value" id="endDate">--/--/----</div>
+            <div class="card">
+                <div class="card-body" id="hotels-info">
+                    <h5 class="card-title"><u>List of Hotels Selected</u></h5>
+                    <h6 class="card-subtitle mb-2 text-muted" id="hotels-amount">Amount: </h6>
                 </div>
             </div>
-          </div>
-    </header>
-          
-    <!-- Insert Hotel Cards Here -->
-    <main class="container my-4" id="hotels">
-      <h1 class="fw-bold display-6" style="margin-top: 1rem;"><span class="text-dark">Hotels</span></h1>
-      <div class="card">
-      </div>
-      <div class="card">
-        <div class="card-body" id="hotels-info">
-          <h5 class="card-title"><u>List of Hotels Selected</u></h5>
-          <h6 class="card-subtitle mb-2 text-muted" id="hotels-amount">Amount: </h6>
-        </div>
-      </div>
-  </main>
-      
-    <!-- Insert Landmark Cards Here -->
-    <main class="container my-4" id="itinerary">
-        <h1 class="fw-bold display-6" style="margin-top: 1rem;"><span class="text-dark">Trip Landmarks To Visit</span></h1>
-        <div class="card">
-        </div>
-    </main>
+        </main>
 
-  </div>
+        <!-- Landmarks Section -->
+        <main class="container my-4" id="itinerary">
+            <h1 class="fw-bold display-6" style="margin-top: 1rem;"><span class="text-dark">Trip Landmarks To
+                    Visit</span></h1>
+            <div class="card">
+            </div>
+        </main>
+    </div>
+
     <script src="script.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script type="text/javascript">
         document.getElementById("export").addEventListener("click", () => {
@@ -109,4 +115,5 @@
         });
     </script>
 </body>
+
 </html>
