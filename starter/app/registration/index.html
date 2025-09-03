@@ -7,12 +7,21 @@
   <title>Create An Account</title>
   <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="style.css" />
+  <link rel="stylesheet" type="text/css" href="../navbar/navbar.css">
 </head>
 <body>
+  <header class="header-nav">    
+    <nav>
+      <div class="container nav-inner">
+        <a href="/" class="logo">TripTracker</a>
+        <a href="/login" class="btn-sign">Sign In / Sign Up</a>
+      </div>
+    </nav>
+  </header>
   <div class="container-md">
     <div class="container" id="login-container">
       <div class="container nav-inner" id="logo">
-        <a href="/home" class="logo">TripTracker</a>
+        <h1 style="padding-bottom: 10px;">Create An Account</h1>
       <div class="container-md">
         <form>
           <div class="container" id="create">
@@ -44,7 +53,7 @@
             <!-- new login link -->
             <p class="mt-3 text-center">
               Already have an account?
-              <a href="/login">Log in here</a>
+              <a href="/login" style="text-decoration: underline; color: blue;">Log in here</a>
             </p>
             
             <div class="container" id="message-box"></div>

@@ -6,8 +6,17 @@
   <title>Log In</title>
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" type="text/css" href="../navbar/navbar.css">
 </head>
 <body>
+  <header class="header-nav">    
+    <nav>
+      <div class="container nav-inner">
+        <a href="/" class="logo">TripTracker</a>
+        <a href="/login" class="btn-sign">Sign In / Sign Up</a>
+      </div>
+    </nav>
+  </header>
   <div class="container-md">
     <div id="login-container">
       <h1>Log In</h1>
@@ -28,7 +37,7 @@
           <button type="submit" class="btn btn-primary w-100" id="loginBtn">Log In</button>
           <div id="message-box" class="mt-2 text-center"></div>
           <p class="mt-3 text-center">
-            Don’t have an account? <a href="/create-account">Register here</a>
+            Don’t have an account? <a href="/create-account" style="text-decoration: underline; color: blue;">Register here</a>
           </p>
         </div>
       </form>
