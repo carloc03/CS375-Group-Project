@@ -4,8 +4,10 @@ console.log(planId);
 
 fetch("/get-plan?id=" + planId).then((response) => {
     response.json().then((body) => {
-        console.log(body);
-        let flightInfo = body.flights;
+        let planNameLabel = document.getElementById("plan-name");
+        planNameLabel.textContent = body['plan_name']
+
+        let flightInfo = body.flights.flightData;
         
         let flightInfoCard = document.getElementById("flight-info")
         

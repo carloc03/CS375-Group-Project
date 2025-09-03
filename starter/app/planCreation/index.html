@@ -15,24 +15,40 @@
     .checklist .form-check { padding:.85rem 1rem; border-radius:.75rem; border:1px solid rgba(0,0,0,.08); background:#fff; }
     .checklist .form-check + .form-check { margin-top:.75rem; }
   </style>
+
+<style>
+  body.compact-header header{
+    height: 120px !important;
+    min-height: 120px !important;
+    max-height: 120px !important;
+    overflow: hidden;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  body.compact-header header .hero-content{ display:none !important; }
+  body.compact-header .wrapper,
+  body.compact-header main,
+  body.compact-header .container:first-of-type{
+    margin-top: 1rem !important;
+  }
+</style>
+
 </head>
-<body>
+<body class="compact-header">
   <header>
-    <nav>
-      <div class="container nav-inner">
-        <a href="/home" class="logo">TripTracker</a>
-        <ul class="nav-links">
-          <li><a href="/search-flights">Search Flights</a></li>
-          <li><a href="/planCreation/">Create a Plan</a></li>
-        </ul>
-        <a href="/logout" class="btn-sign" id="logout">Logout</a>
-      </div>
-    </nav>
-    <div class="container hero-content">
-      <h1>Create Your Trip Plan</h1>
-      <p>Name it, set your destination, and choose what to include.</p>
-</div>
-  </header>
+  <nav>
+    <div class="container nav-inner">
+      <a href="/home" class="logo">TripTracker</a>
+      <ul class="nav-links">
+        <li><a href="/explore-landmarks">Explore Landmarks</a></li>
+        <li><a href="/explore">Explore Flights</a></li>
+        <li><a href="/planCreation">Create a Plan</a></li>
+        <li><a href="/saved-plans">View Saved Plans</a></li>
+      </ul>
+      <a href="/logout" class="btn-sign" id="logout">Logout</a>
+    </div>
+  </nav>
+</header>
 
   <main class="wrapper" id="form">
     <div class="tw-card">
