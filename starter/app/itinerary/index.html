@@ -20,16 +20,16 @@
                 <li><a href="/planCreation">Create a Plan</a></li>
             <li><a href="/saved-plans">View Saved Plans</a></li>
               </ul>
+              <button id="export" class="btn btn-primary">Export as PDF </button>
               <a href="/logout" class="btn-sign" id="logout">Logout</a>
             </div>
           </nav>
     </header>
-
+  
     <div class="d-flex justify-content-center my-5">
         <button id="export" class="btn btn-primary">Export as PDF </button>
     </div>
   <div id="export-all">
-
     <header>
         <div class="itinerary-header">
             <div class="container">
@@ -49,8 +49,10 @@
           <div class="container my-4">
             <div class="card">
               <div class="card-body" id="flight-info">
-                <h5 class="card-title">Flight Details</h5>
+                <h5 class="card-title"><u>Flight Details</u></h5>
                 <h6 class="card-subtitle mb-2 text-muted" id="airport">Airport: </h6>
+                <div class="row" id="flight-info-row-1"></div>
+                <div class="row mt-2" id="flight-info-row-2"> </div>
               </div>
             </div>
 
@@ -72,10 +74,23 @@
             </div>
           </div>
     </header>
+          
+    <!-- Insert Hotel Cards Here -->
+    <main class="container my-4" id="hotels">
+      <h1 class="fw-bold display-6" style="margin-top: 1rem;"><span class="text-dark">Hotels</span></h1>
+      <div class="card">
+      </div>
+      <div class="card">
+        <div class="card-body" id="hotels-info">
+          <h5 class="card-title"><u>List of Hotels Selected</u></h5>
+          <h6 class="card-subtitle mb-2 text-muted" id="hotels-amount">Amount: </h6>
+        </div>
+      </div>
+  </main>
       
-    <!-- Insert Itinerary Cards Here -->
+    <!-- Insert Landmark Cards Here -->
     <main class="container my-4" id="itinerary">
-        <h1 class="fw-bold display-6" style="margin-top: 1rem;"><span class="text-dark">Trip Landmarks Visit</span></h1>
+        <h1 class="fw-bold display-6" style="margin-top: 1rem;"><span class="text-dark">Trip Landmarks To Visit</span></h1>
         <div class="card">
         </div>
     </main>
