@@ -28,6 +28,7 @@
     <div class="d-flex justify-content-center my-5">
         <button id="export" class="btn btn-primary">Export as PDF </button>
     </div>
+  <div id="export-all">
 
     <header>
         <div class="itinerary-header">
@@ -69,11 +70,7 @@
                   <div class="info-value" id="endDate">--/--/----</div>
                 </div>
             </div>
-
           </div>
-        </div>
-
-        </div>
     </header>
       
     <!-- Insert Itinerary Cards Here -->
@@ -82,13 +79,14 @@
         <div class="card">
         </div>
     </main>
-      
+
+  </div>
     <script src="script.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script type="text/javascript">
         document.getElementById("export").addEventListener("click", () => {
-            const element = document.querySelector(".container");
+            const element = document.getElementById("export-all");
             const opt = {
                 margin: 1,
                 filename: "planner.pdf",
