@@ -6,16 +6,30 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
+ <header>
+    <nav>
+      <div class="container nav-inner">
+        <a href="/" class="logo">TripTracker</a>
+        <ul class="nav-links">
+		  <li><a href="/home">Home</a></li>
+          <li><a href="/explore-landmarks">Explore Landmarks</a></li>
+          <li><a href="/explore">Explore Flights</a></li>
+          <li><a href="/planCreation">Create a Plan</a></li>
+          <li><a href="/saved-plans">View Saved Plans</a></li>
+        </ul>
+        <a href="/logout" class="btn-sign" id="logout">Logout</a>
+      </div>
+    </nav>
+
+    <div class="hero-content text-center text-white">
+      <h1>Flight Search</h1>
+    </div>
+  </header>
 <body>
   <body class="bg-light">
-  <div class="container my-5">
-    <div class="text-center mb-5">
-      <h1 class="display-5 fw-bold text-primary">
-        <i class="bi bi-airplane"></i>Flight Search
-      </h1>
-    </div>
+  <div id = "acontainer" class="container my-5">
       <div class="card-body">
         <form id="flightForm">
           <div class="row g-3">
@@ -97,18 +111,24 @@
         </form>
       </div>
     </div>
-
+    
   <div class="spinner" id="spinner"></div>
 
-  <h2>Results:</h2>
-  <div id="results" class="results-container">No results yet.</div>
-  
-  <button id="seeMoreBtn" class="see-more-btn hidden">See More Flights</button>
+  <div class="container my-5">
+    <div class="results" style="max-width: 950px; margin: 0 auto;">
+      <h2>Results:</h2>
+      <div id="results" class="results-container">No results yet.</div>
 
-  <div id="submitSection" class="submit-section hidden">
-    <div class="selected-count" id="selectedCount">0 flights selected</div>
-    <button id="submitSelectedFlights" class="submit-btn" disabled>Add to Planner</button>
+      <button id="seeMoreBtn" class="see-more-btn hidden">See More Flights</button>
+
+      <div id="submitSection" class="submit-section hidden">
+        <div class="selected-count" id="selectedCount">0 flights selected</div>
+        <button id="submitSelectedFlights" class="submit-btn" disabled>Add to Planner</button>
+      </div>
+    </div>
   </div>
+
+
 
   <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
   <script src="flights.js"></script>
