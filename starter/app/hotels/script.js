@@ -270,6 +270,28 @@ function initMap() {
     document.getElementById('city').addEventListener('keypress', handleEnterKey);
 }
 
+// No Hotels Needed for Travel Planner
+const noHotelsButton = document.getElementById('no-hotels');
+noHotelsButton.addEventListener('click', function(){
+    fetch("/post-plan-hotels?id=" + planId, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+        }),
+    }).then(response => {
+        console.log(response.status)
+        if(response.status == 200){
+            console.log("OK")
+            location.assign("/mapv2?id=" + planId)
+        }else{
+            console.log("BAD")
+        }
+        console.log(response);
+    })
+});
+
 function handleEnterKey(event) {
     if (event.key === 'Enter') {
         search();
@@ -549,8 +571,10 @@ function updateSelectedHotelsDisplay() {
 
     if (selectedHotels.length > 0) {
         landmarksButton.style.display = 'block';
+        noHotelsButton.style.display = 'none';
     } else {
         landmarksButton.style.display = 'none';
+        noHotelsButton.style.display = 'block';
     }
 
     if (selectedHotels.length === 0) {

@@ -4,8 +4,7 @@ console.log(planId);
 
 fetch("/get-plan?id=" + planId).then((response) => {
     response.json().then((body) => {
-        console.log(body);
-        let flightInfo = body.flights;
+        let flightInfo = body.flights.flightData;
         
         let flightInfoCard = document.getElementById("flight-info")
         
