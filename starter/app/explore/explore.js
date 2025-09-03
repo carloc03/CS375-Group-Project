@@ -24,7 +24,28 @@
   { value: "IND", label: "Indianapolis, IN (IND)" }, { value: "JAX", label: "Jacksonville, FL (JAX)" },
   { value: "SAT", label: "San Antonio, TX (SAT)" }, { value: "CVG", label: "Cincinnati, OH (CVG)" },
   { value: "PBI", label: "West Palm Beach, FL (PBI)" }, { value: "RSW", label: "Fort Myers, FL (RSW)" },
-  { value: "OKC", label: "Oklahoma City, OK (OKC)" }
+  { value: "OKC", label: "Oklahoma City, OK (OKC)" },
+  //international airports
+  { value: "LHR", label: "London Heathrow, UK (LHR)" },
+  { value: "CDG", label: "Paris Charles de Gaulle, France (CDG)" },
+  { value: "FRA", label: "Frankfurt, Germany (FRA)" },
+  { value: "AMS", label: "Amsterdam Schiphol, Netherlands (AMS)" },
+  { value: "MAD", label: "Madrid Barajas, Spain (MAD)" },
+  { value: "FCO", label: "Rome Fiumicino, Italy (FCO)" },
+  { value: "DXB", label: "Dubai, UAE (DXB)" },
+  { value: "HKG", label: "Hong Kong, China (HKG)" },
+  { value: "SIN", label: "Singapore Changi, Singapore (SIN)" },
+  { value: "NRT", label: "Tokyo Narita, Japan (NRT)" },
+  { value: "HND", label: "Tokyo Haneda, Japan (HND)" },
+  { value: "ICN", label: "Seoul Incheon, South Korea (ICN)" },
+  { value: "BKK", label: "Bangkok Suvarnabhumi, Thailand (BKK)" },
+  { value: "SYD", label: "Sydney, Australia (SYD)" },
+  { value: "GRU", label: "São Paulo Guarulhos, Brazil (GRU)" },
+  { value: "YYZ", label: "Toronto Pearson, Canada (YYZ)" },
+  { value: "YVR", label: "Vancouver, Canada (YVR)" },
+  { value: "MEX", label: "Mexico City, Mexico (MEX)" },
+  { value: "JNB", label: "Johannesburg OR Tambo, South Africa (JNB)" },
+  { value: "CAI", label: "Cairo, Egypt (CAI)" }
 ];
 
 new Choices("#originSelect", {
