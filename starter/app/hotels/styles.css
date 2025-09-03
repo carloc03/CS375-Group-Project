@@ -145,6 +145,18 @@ nav a:hover {
     font-weight: 500;
 }
 
+.no-hotels-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+    font-weight: 500;
+}
+
 .landmarks-btn:hover {
     background-color: #229954;
 }

@@ -275,7 +275,7 @@ document.getElementById('submitSelectedFlights').addEventListener('click', funct
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            flightData : flightData 
+            flightData
         }),
     }).then(response => {
       console.log(response.status)
@@ -287,4 +287,24 @@ document.getElementById('submitSelectedFlights').addEventListener('click', funct
       }
       console.log(response);
     })
+});
+
+document.getElementById('no-flight').addEventListener('click', function() {
+  fetch("/post-plan-flights?id=" + planId, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+    }),
+  }).then(response => {
+    console.log(response.status)
+    if(response.status == 200){
+        console.log("OK")
+        location.assign("/hotels?id=" + planId)
+    }else{
+        console.log("BAD")
+    }
+    console.log(response);
+  })
 });
