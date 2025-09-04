@@ -11,8 +11,6 @@ let cookieParser = require("cookie-parser");
 let crypto = require("crypto");
 app.use(cookieParser());
 
-const hostname = "localhost";
-
 const useSSL =
   process.env.DATABASE_SSL === "true" ||
   process.env.NODE_ENV === "production" ||
@@ -740,6 +738,6 @@ app.get("/api/city-hero", async (req, res) => {
 });
 // saved-plans image display end //
 
-app.listen(port, hostname, () => {
-  console.log(`Listening at: http://${hostname}:${port}`);
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
 });
